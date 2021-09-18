@@ -1,3 +1,4 @@
+import { Chess } from 'chess.ts';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { ChessBoard } from './components/ChessBoard';
@@ -19,14 +20,14 @@ const SidebarContainer = styled.div`
 `;
 
 function App() {
-    const [fen, setFen] = useState(
-        'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+    const [position, setPosition] = useState(
+        new Chess()
     );
 
     return (
         <Layout>
             <ChessBoardContainer>
-                <ChessBoard fen={fen} setFen={setFen} />
+                <ChessBoard position={position} setPosition={setPosition} />
             </ChessBoardContainer>
             <SidebarContainer>
                 <Sidebar />
