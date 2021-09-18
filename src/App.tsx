@@ -9,8 +9,7 @@ const Layout = styled.div`
 `;
 
 const ChessBoardContainer = styled.div`
-    width: 100vh;
-    height: 100vh;
+    width: 1040px;
     padding: 20px;
 `;
 
@@ -23,14 +22,14 @@ function App() {
     const [position, setPosition] = useState(
         new Chess()
     );
-
+    
     return (
         <Layout>
             <ChessBoardContainer>
                 <ChessBoard position={position} setPosition={setPosition} />
             </ChessBoardContainer>
             <SidebarContainer>
-                <Sidebar />
+                <Sidebar position={position} />
             </SidebarContainer>
         </Layout>
     );
