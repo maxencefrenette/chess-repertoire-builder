@@ -18,6 +18,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ position }) => {
     return (
         <div>
             <table>
+                <thead>
+                    <td>Move</td>
+                    <td>Score</td>
+                </thead>
                 {openingStats.moves.map((move) => (
                     <tr>
                         <td>{move.san}</td>
