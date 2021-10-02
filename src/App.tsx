@@ -1,5 +1,5 @@
 import { Chess } from 'chess.ts';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { ChessBoard } from './components/ChessBoard';
 import { Sidebar } from './components/Sidebar';
@@ -22,6 +22,12 @@ function App() {
     const [position, setPosition] = useState(
         new Chess()
     );
+
+    const makeMove = useCallback((move: string) => {
+        const newPosition = position.clone();
+        newPosition.move(move);
+        setPosition(newPosition);
+    }, [position]);
     
     return (
         <Layout>
@@ -29,7 +35,7 @@ function App() {
                 <ChessBoard position={position} setPosition={setPosition} />
             </ChessBoardContainer>
             <SidebarContainer>
-                <Sidebar position={position} />
+                <Sidebar position={position} onMove={makeMove} />
             </SidebarContainer>
         </Layout>
     );

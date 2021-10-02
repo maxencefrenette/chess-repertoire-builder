@@ -4,9 +4,10 @@ import { OpeningMove, useOpeningPosition } from '../hooks/api';
 
 export interface SidebarProps {
     position: Chess;
+    onMove: (move: string) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ position }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ position, onMove }) => {
     const openingStatsResponse = useOpeningPosition(position.fen());
 
     if (!openingStatsResponse.data) {
@@ -19,15 +20,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ position }) => {
         <div>
             <table>
                 <thead>
-                    <td>Move</td>
-                    <td>Score</td>
-                </thead>
-                {openingStats.moves.map((move) => (
                     <tr>
-                        <td>{move.san}</td>
-                        <td>{score(move).toLocaleString(undefined, { style: 'percent' })}</td>
+                        <td>Move</td>
+                        <td>Score</td>
                     </tr>
-                ))}
+                </thead>
+                <tbody>
+                    {openingStats.moves.map((move) => (
+                        <tr key={move.san} onClick={() => onMove(move.san)}>
+                            <td>{move.san}</td>
+                            <td>
+                                {score(move).toLocaleString(undefined, {
+                                    style: 'percent',
+                                })}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
             </table>
         </div>
     );
@@ -35,5 +44,5 @@ export const Sidebar: React.FC<SidebarProps> = ({ position }) => {
 
 function score(move: OpeningMove) {
     const totalGames = move.white + move.draws + move.black;
-    return ((move.white + move.draws / 2)) / totalGames;
+    return (move.white + move.draws / 2) / totalGames;
 }
