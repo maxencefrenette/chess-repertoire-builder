@@ -1,14 +1,11 @@
-import { Chess } from 'chess.ts';
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { OpeningMove, useOpeningPosition } from '../hooks/api';
+import { useStore } from '../store';
 
-export interface SidebarProps {
-    position: Chess;
-    onMove: (move: string) => void;
-}
-
-export const Sidebar: React.FC<SidebarProps> = ({ position, onMove }) => {
-    const openingStatsResponse = useOpeningPosition(position.fen());
+export const Sidebar: React.FC = observer(() => {
+    const store = useStore();
+    const openingStatsResponse = useOpeningPosition(store.ui.position.fen());
 
     if (!openingStatsResponse.data) {
         return <div>Loading...</div>;
@@ -27,7 +24,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ position, onMove }) => {
                 </thead>
                 <tbody>
                     {openingStats.moves.map((move) => (
-                        <tr key={move.san} onClick={() => onMove(move.san)}>
+                        <tr
+                            key={move.san}
+                            onClick={() => store.ui.makeMove(move.san)}
+                        >
                             <td>{move.san}</td>
                             <td>
                                 {score(move).toLocaleString(undefined, {
@@ -40,7 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ position, onMove }) => {
             </table>
         </div>
     );
-};
+});
 
 function score(move: OpeningMove) {
     const totalGames = move.white + move.draws + move.black;
