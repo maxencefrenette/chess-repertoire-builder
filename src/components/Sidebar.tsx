@@ -20,6 +20,7 @@ export const Sidebar: React.FC = observer(() => {
                     <tr>
                         <td>Move</td>
                         <td>Score</td>
+                        <td>Games</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,6 +35,7 @@ export const Sidebar: React.FC = observer(() => {
                                     style: 'percent',
                                 })}
                             </td>
+                            <td>{move.white + move.draws + move.black}</td>
                         </tr>
                     ))}
                 </tbody>
