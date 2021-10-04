@@ -4,6 +4,9 @@
   "private": true,
   "license": "AGPL-3.0-or-later",
   "dependencies": {
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@mui/material": "^5.0.2",
     "@react-chess/chessground": "^1.1.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
