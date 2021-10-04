@@ -1,3 +1,4 @@
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { OpeningMove, useOpeningPosition } from '../hooks/api';
@@ -14,33 +15,34 @@ export const Sidebar: React.FC = observer(() => {
     const openingStats = openingStatsResponse.data;
 
     return (
-        <div>
-            <table>
-                <thead>
-                    <tr>
-                        <td>Move</td>
-                        <td>Score</td>
-                        <td>Games</td>
-                    </tr>
-                </thead>
-                <tbody>
+        <TableContainer component={Paper}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Move</TableCell>
+                        <TableCell>Score</TableCell>
+                        <TableCell>Games</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {openingStats.moves.map((move) => (
-                        <tr
+                        <TableRow
                             key={move.san}
                             onClick={() => store.ui.makeMove(move.san)}
+                            hover={true}
                         >
-                            <td>{move.san}</td>
-                            <td>
+                            <TableCell>{move.san}</TableCell>
+                            <TableCell>
                                 {score(move).toLocaleString(undefined, {
                                     style: 'percent',
                                 })}
-                            </td>
-                            <td>{move.white + move.draws + move.black}</td>
-                        </tr>
+                            </TableCell>
+                            <TableCell>{move.white + move.draws + move.black}</TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
-        </div>
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 });
 
