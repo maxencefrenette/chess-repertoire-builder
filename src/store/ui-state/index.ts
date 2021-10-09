@@ -1,12 +1,16 @@
-import { Chess } from "chess.ts";
-import { action, makeObservable, observable } from "mobx";
-import { Square } from "../../helpers/chess";
+import { Chess } from 'chess.ts';
+import { action, makeObservable, observable } from 'mobx';
+import { Square } from '../../helpers/chess';
 
 export class UiState {
     position: Chess;
 
     constructor() {
-        makeObservable(this, { position: observable, makeMove: action, makeMoveFromTo: action })
+        makeObservable(this, {
+            position: observable,
+            makeMove: action,
+            makeMoveFromTo: action,
+        });
         this.position = new Chess();
     }
 
