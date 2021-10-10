@@ -1,7 +1,8 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { OpeningMove, useOpeningPosition } from '../hooks/api';
+import { score } from '../helpers/chess';
+import { useOpeningPosition } from '../hooks/api';
 import { useStore } from '../store';
 
 export const Sidebar: React.FC = observer(() => {
@@ -45,8 +46,3 @@ export const Sidebar: React.FC = observer(() => {
         </TableContainer>
     );
 });
-
-function score(move: OpeningMove) {
-    const totalGames = move.white + move.draws + move.black;
-    return (move.white + move.draws / 2) / totalGames;
-}
