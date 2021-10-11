@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { ChessBoard } from './ChessBoard';
 import { Sidebar } from './Sidebar';
+import { TopBar } from './TopBar';
 
 const Container = styled.div`
     display: flex;
@@ -19,13 +20,16 @@ const SidebarContainer = styled.div`
 
 export const Layout = () => {
     return (
-        <Container>
-            <ChessBoardContainer>
-                <ChessBoard />
-            </ChessBoardContainer>
-            <SidebarContainer>
-                <Sidebar />
-            </SidebarContainer>
-        </Container>
+        <>
+            <TopBar />
+            <Container>
+                <ChessBoardContainer>
+                    <ChessBoard />
+                </ChessBoardContainer>
+                <SidebarContainer>
+                    <Sidebar />
+                </SidebarContainer>
+            </Container>
+        </>
     );
 };
