@@ -1,8 +1,8 @@
 import React from 'react';
 import Chessground from '@react-chess/chessground';
-import { useStore } from '../store';
+import { useStore } from '../../store';
 import { observer } from 'mobx-react-lite';
-import { generateMovesForChessboard, Square } from '../helpers/chess';
+import { generateMovesForChessboard, Square } from '../../helpers/chess';
 
 export const ChessBoard: React.FC = observer(() => {
     const store = useStore();

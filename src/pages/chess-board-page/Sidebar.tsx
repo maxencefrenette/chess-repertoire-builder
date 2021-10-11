@@ -1,9 +1,9 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { score } from '../helpers/chess';
-import { useOpeningPosition } from '../hooks/api';
-import { useStore } from '../store';
+import { score } from '../../helpers/chess';
+import { useOpeningPosition } from '../../hooks/api';
+import { useStore } from '../../store';
 
 export const Sidebar: React.FC = observer(() => {
     const store = useStore();
