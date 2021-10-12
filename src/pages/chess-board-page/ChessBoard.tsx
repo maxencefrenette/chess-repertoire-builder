@@ -2,13 +2,14 @@ import React from 'react';
 import Chessground from '@react-chess/chessground';
 import { useStore } from '../../store';
 import { observer } from 'mobx-react-lite';
-import { generateMovesForChessboard, Square } from '../../helpers/chess';
+import { generateLegalMovesForChessboard, getLastMoveTuple, Square } from '../../helpers/chess';
 
 export const ChessBoard: React.FC = observer(() => {
     const store = useStore();
 
     const position = store.ui.position;
-    const moves = generateMovesForChessboard(position);
+    const legalMoves = generateLegalMovesForChessboard(position);
+    const lastMove = getLastMoveTuple(position);
 
     return (
         <Chessground
@@ -16,11 +17,14 @@ export const ChessBoard: React.FC = observer(() => {
             height={1000}
             config={{
                 fen: store.ui.position.fen(),
-                movable: { free: false, dests: moves },
+                check: position.inCheck(),
+                turnColor: position.turn() === 'w' ? 'white' : 'black',
+                lastMove: lastMove,
+                movable: { free: false, dests: legalMoves },
                 events: {
                     move: (from, to) =>
                         store.ui.makeMoveFromTo(from as Square, to as Square),
-                },
+                }
             }}
         />
     );
