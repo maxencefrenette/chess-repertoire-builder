@@ -10,6 +10,7 @@ export class UiState {
             position: observable,
             makeMove: action,
             makeMoveFromTo: action,
+            navigateToMove: action,
         });
         this.position = new Chess();
     }
@@ -23,6 +24,17 @@ export class UiState {
     makeMoveFromTo(from: Square, to: Square) {
         const newPosition = this.position.clone();
         newPosition.move({ from, to });
+        this.position = newPosition;
+    }
+
+    navigateToMove(moveIndex: number) {
+        const numUndos = this.position.history().length - moveIndex - 1;
+        const newPosition = this.position.clone();
+
+        for (let i = 0; i < numUndos; i++) {
+            newPosition.undo();
+        }
+
         this.position = newPosition;
     }
 }
