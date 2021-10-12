@@ -1,32 +1,18 @@
+import { Box } from '@mui/system';
 import { RouteComponentProps } from '@reach/router';
 import React from 'react';
-import styled from 'styled-components';
 import { ChessBoard } from './ChessBoard';
 import { Sidebar } from './Sidebar';
 
-const Container = styled.div`
-    display: flex;
-`;
-
-const ChessBoardContainer = styled.div`
-    width: 1040px;
-    padding: 20px;
-`;
-
-const SidebarContainer = styled.div`
-    flex: 1 0 200px;
-    padding: 20px;
-`;
-
 export const ChessBoardPage: React.FC<RouteComponentProps> = () => {
     return (
-        <Container>
-            <ChessBoardContainer>
+        <Box sx={{ display: 'flex', padding: '10px' }}>
+            <Box sx={{ width: '1000px', margin: '10px' }}>
                 <ChessBoard />
-            </ChessBoardContainer>
-            <SidebarContainer>
+            </Box>
+            <Box sx={{ flex: '1 0 200px', margin: '10px' }}>
                 <Sidebar />
-            </SidebarContainer>
-        </Container>
+            </Box>
+        </Box>
     );
 };
