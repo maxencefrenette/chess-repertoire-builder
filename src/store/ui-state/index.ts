@@ -4,10 +4,12 @@ import { Square } from '../../helpers/chess';
 
 export class UiState {
     position: Chess;
+    hoveredMoveUci: string | undefined;
 
     constructor() {
         makeObservable(this, {
             position: observable,
+            hoveredMoveUci: observable,
             makeMove: action,
             makeMoveFromTo: action,
             navigateToMove: action,

@@ -9,6 +9,7 @@ import {
     TableHead,
     TableRow,
 } from '@mui/material';
+import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { score } from '../../helpers/chess';
@@ -41,12 +42,16 @@ export const Sidebar: React.FC = observer(() => {
                             <TableCell>Games</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
+                    <TableBody onMouseLeave={action(() => store.ui.hoveredMoveUci = undefined)}>
                         {openingStats.moves.map((move) => (
                             <TableRow
                                 key={move.san}
-                                onClick={() => store.ui.makeMove(move.san)}
                                 hover={true}
+                                onClick={action(() => {
+                                    store.ui.hoveredMoveUci = undefined;
+                                    store.ui.makeMove(move.san);
+                                })}
+                                onMouseEnter={action(() => store.ui.hoveredMoveUci = move.uci)}
                             >
                                 <TableCell>{move.san}</TableCell>
                                 <TableCell>

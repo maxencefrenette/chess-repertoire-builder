@@ -32,7 +32,7 @@ export const MovesBreadcrumbs = () => {
             {' '}
             {moves.map((move, i) => {
                 return (
-                    <>
+                    <React.Fragment key={i + move}>
                         {i % 2 === 0 && (
                             <Typography
                                 variant="body2"
@@ -49,7 +49,7 @@ export const MovesBreadcrumbs = () => {
                         >
                             {move}
                         </Button>
-                    </>
+                    </React.Fragment>
                 );
             })}
         </>
