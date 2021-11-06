@@ -20,10 +20,10 @@ export const TopBar = () => {
                     </Button>
                     <Button
                         component={RouterLink}
-                        to="/repertoire"
+                        to="/repertoires"
                         color="inherit"
                     >
-                        Repertoire
+                        Repertoires
                     </Button>
                     <Button
                         component={RouterLink}

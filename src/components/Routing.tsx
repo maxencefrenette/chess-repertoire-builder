@@ -8,7 +8,7 @@ export const Routing = () => {
     return (
         <Router>
             <ChessBoardPage path="/" default />
-            <RepertoirePage path="/repertoire" />
+            <RepertoirePage path="/repertoires" />
             <LoginPage path="/login" />
         </Router>
     )
