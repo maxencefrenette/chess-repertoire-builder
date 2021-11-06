@@ -1,4 +1,5 @@
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { Link as RouterLink } from '@reach/router';
 import React from 'react';
 
 export const TopBar = () => {
@@ -13,10 +14,10 @@ export const TopBar = () => {
                     >
                         Chess Buddy
                     </Typography>
-                    <Button color="inherit">Board</Button>
-                    <Button color="inherit">Repertoire</Button>
-                    <Button color="inherit">Options</Button>
-                    <Button color="inherit">Help</Button>
+                    <Button component={RouterLink} to="/" color="inherit">Board</Button>
+                    <Button component={RouterLink} to="/repertoire" color="inherit">Repertoire</Button>
+                    <Button component={RouterLink} to="/options" color="inherit">Options</Button>
+                    <Button component={RouterLink} to="/help" color="inherit">Help</Button>
                 </Toolbar>
             </AppBar>
         </div>
