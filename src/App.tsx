@@ -6,12 +6,12 @@ import { SupabaseContextProvider } from './hooks/supabase';
 
 function App() {
     return (
-        <SupabaseContextProvider>
-            <StoreContext.Provider value={new RootStore()}>
+        <StoreContext.Provider value={new RootStore()}>
+            <SupabaseContextProvider>
                 <CssBaseline />
                 <Layout />
-            </StoreContext.Provider>
-        </SupabaseContextProvider>
+            </SupabaseContextProvider>
+        </StoreContext.Provider>
     );
 }
 

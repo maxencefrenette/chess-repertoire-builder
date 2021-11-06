@@ -3,11 +3,13 @@ import { action, makeObservable, observable } from 'mobx';
 import { Square } from '../../helpers/chess';
 
 export class UiState {
+    isLoggedIn: boolean | undefined = undefined;
     position: Chess;
     hoveredMoveUci: string | undefined;
 
     constructor() {
         makeObservable(this, {
+            isLoggedIn: observable,
             position: observable,
             hoveredMoveUci: observable,
             makeMove: action,

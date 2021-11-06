@@ -19,8 +19,6 @@ export const LoginPage: React.FC<RouteComponentProps> = () => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
 
-        console.log(data.get('email'));
-
         const { error } = await supabase.auth.signIn({
             email: data.get('email') as string,
         });

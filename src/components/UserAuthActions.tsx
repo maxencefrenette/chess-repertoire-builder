@@ -3,14 +3,17 @@ import React from 'react';
 import { useSupabase } from '../hooks/supabase';
 import { Link as RouterLink } from '@reach/router';
 import { AccountCircle } from '@mui/icons-material';
+import { useStore } from '../store';
+import { observer } from 'mobx-react-lite';
 
-export const UserAuthActions = () => {
+export const UserAuthActions = observer(() => {
+    const store = useStore();
     const supabase = useSupabase();
-    const user = supabase.auth.user();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-    if (user === null) {
+    // Use the store instead of supabase to check if the user is logged in in order to trigger appropriate rerenders through mobx
+    if (store.ui.isLoggedIn === false) {
         return (
             <Button
                 component={RouterLink}
@@ -20,7 +23,7 @@ export const UserAuthActions = () => {
                 Login
             </Button>
         );
-    } else {
+    } else if (store.ui.isLoggedIn === true) {
         const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
             setAnchorEl(event.currentTarget);
         };
@@ -65,5 +68,8 @@ export const UserAuthActions = () => {
                 </Menu>
             </>
         );
+    } else {
+        // Display nothing if we don't know yet if the user is logged-in. This happens while the app is still loading.
+        return null;
     }
-};
+});
