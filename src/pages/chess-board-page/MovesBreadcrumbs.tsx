@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Typography } from '@mui/material';
+import { Button, Typography, IconButton } from '@mui/material';
 import { useStore } from '../../store';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
@@ -11,24 +11,20 @@ export const MovesBreadcrumbs = () => {
 
     return (
         <>
-            <Button
+            <IconButton
                 size="small"
-                variant="text"
-                sx={{ minWidth: '0', textTransform: 'unset' }}
                 disabled={moves.length === 0}
                 onClick={() => store.ui.navigateToMove(-1)}
             >
                 <FirstPageIcon />
-            </Button>
-            <Button
+            </IconButton>
+            <IconButton
                 size="small"
-                variant="text"
-                sx={{ minWidth: '0', textTransform: 'unset' }}
                 disabled={moves.length === 0}
                 onClick={() => store.ui.navigateToMove(moves.length - 2)}
             >
                 <NavigateBeforeIcon />
-            </Button>
+            </IconButton>
             {' '}
             {moves.map((move, i) => {
                 return (
