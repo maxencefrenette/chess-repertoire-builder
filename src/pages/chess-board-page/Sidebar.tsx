@@ -16,9 +16,11 @@ import { score } from '../../helpers/chess';
 import { useOpeningPosition } from '../../hooks/api';
 import { useStore } from '../../store';
 import { MovesBreadcrumbs } from './MovesBreadcrumbs';
+import { RepertoireSelect } from './RepertoireSelect';
 
 export const Sidebar: React.FC = observer(() => {
     const store = useStore();
+
     const openingStatsResponse = useOpeningPosition(store.ui.position.fen());
 
     if (!openingStatsResponse.data) {
@@ -29,6 +31,10 @@ export const Sidebar: React.FC = observer(() => {
 
     return (
         <Paper>
+            <Box sx={{ padding: '16px' }}>
+                <RepertoireSelect />
+            </Box>
+            <Divider />
             <Box sx={{ padding: '16px' }}>
                 <MovesBreadcrumbs />
             </Box>
@@ -42,7 +48,11 @@ export const Sidebar: React.FC = observer(() => {
                             <TableCell>Games</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody onMouseLeave={action(() => store.ui.hoveredMoveUci = undefined)}>
+                    <TableBody
+                        onMouseLeave={action(
+                            () => (store.ui.hoveredMoveUci = undefined)
+                        )}
+                    >
                         {openingStats.moves.map((move) => (
                             <TableRow
                                 key={move.san}
@@ -51,7 +61,9 @@ export const Sidebar: React.FC = observer(() => {
                                     store.ui.hoveredMoveUci = undefined;
                                     store.ui.makeMove(move.san);
                                 })}
-                                onMouseEnter={action(() => store.ui.hoveredMoveUci = move.uci)}
+                                onMouseEnter={action(
+                                    () => (store.ui.hoveredMoveUci = move.uci)
+                                )}
                             >
                                 <TableCell>{move.san}</TableCell>
                                 <TableCell>

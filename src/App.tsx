@@ -3,13 +3,18 @@ import { Layout } from './components/Layout';
 import { RootStore, StoreContext } from './store';
 import './App.css';
 import { SupabaseContextProvider } from './hooks/supabase';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 function App() {
     return (
         <StoreContext.Provider value={new RootStore()}>
             <SupabaseContextProvider>
-                <CssBaseline />
-                <Layout />
+                <QueryClientProvider client={queryClient}>
+                    <CssBaseline />
+                    <Layout />
+                </QueryClientProvider>
             </SupabaseContextProvider>
         </StoreContext.Provider>
     );

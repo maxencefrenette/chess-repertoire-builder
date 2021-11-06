@@ -1,11 +1,13 @@
 import { Chess } from 'chess.ts';
 import { action, makeObservable, observable } from 'mobx';
 import { Square } from '../../helpers/chess';
+import { Repertoire } from '../../models/repertoire';
 
 export class UiState {
     isLoggedIn: boolean | undefined = undefined;
     position: Chess;
     hoveredMoveUci: string | undefined;
+    repertoire: Repertoire | undefined;
 
     constructor() {
         makeObservable(this, {
