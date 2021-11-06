@@ -7,7 +7,8 @@ import {
     getLastMoveTuple,
     Square,
 } from '../../helpers/chess';
-import { DrawShape } from "chessground/draw";
+import { DrawShape } from 'chessground/draw';
+import { Paper } from '@mui/material';
 
 export const ChessBoard: React.FC = observer(() => {
     const store = useStore();
@@ -20,27 +21,36 @@ export const ChessBoard: React.FC = observer(() => {
 
     if (store.ui.hoveredMoveUci) {
         const move = store.ui.hoveredMoveUci;
-        highlightedMove = { orig: move.slice(0, 2) as Square, dest: move.slice(2, 4) as Square, brush: 'paleBlue' };
+        highlightedMove = {
+            orig: move.slice(0, 2) as Square,
+            dest: move.slice(2, 4) as Square,
+            brush: 'paleBlue',
+        };
     }
 
     return (
-        <Chessground
-            width={1000}
-            height={1000}
-            config={{
-                fen: store.ui.position.fen(),
-                check: position.inCheck(),
-                turnColor: position.turn() === 'w' ? 'white' : 'black',
-                lastMove: lastMove,
-                movable: { free: false, dests: legalMoves },
-                events: {
-                    move: (from, to) =>
-                        store.ui.makeMoveFromTo(from as Square, to as Square),
-                },
-                drawable: {
-                    autoShapes: highlightedMove ? [highlightedMove] : []
-                }
-            }}
-        />
+        <Paper sx={{ overflow: 'hidden' }}>
+            <Chessground
+                width={1000}
+                height={1000}
+                config={{
+                    fen: store.ui.position.fen(),
+                    check: position.inCheck(),
+                    turnColor: position.turn() === 'w' ? 'white' : 'black',
+                    lastMove: lastMove,
+                    movable: { free: false, dests: legalMoves },
+                    events: {
+                        move: (from, to) =>
+                            store.ui.makeMoveFromTo(
+                                from as Square,
+                                to as Square
+                            ),
+                    },
+                    drawable: {
+                        autoShapes: highlightedMove ? [highlightedMove] : [],
+                    },
+                }}
+            />
+        </Paper>
     );
 });
