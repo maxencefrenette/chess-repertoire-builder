@@ -1,5 +1,12 @@
 /// <reference types="react-scripts" />
 
+declare namespace NodeJS {
+    interface ProcessEnv {
+        REACT_APP_SUPABASE_URL: string;
+        REACT_APP_SUPABASE_ANON_KEY: string;
+    }
+}
+
 declare module 'react-chessground' {
     import React from 'react';
     interface ReactChessGroundProps {
