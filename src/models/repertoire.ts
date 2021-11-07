@@ -1,5 +1,5 @@
 export interface Repertoire {
-    id: string;
-    name: string;
-    user_id: string;
+    readonly  id: string;
+    readonly name: string;
+    readonly user_id: string;
 }

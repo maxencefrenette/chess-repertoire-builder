@@ -14,6 +14,7 @@ export class UiState {
             isLoggedIn: observable,
             position: observable,
             hoveredMoveUci: observable,
+            repertoire: observable,
             makeMove: action,
             makeMoveFromTo: action,
             navigateToMove: action,

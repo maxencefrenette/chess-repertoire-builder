@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     FormControl,
     InputLabel,
@@ -6,13 +7,13 @@ import {
     SelectChangeEvent,
 } from '@mui/material';
 import { action } from 'mobx';
-import React from 'react';
+import { observer } from 'mobx-react-lite';
 import { useQuery } from 'react-query';
 import { useSupabase } from '../../hooks/supabase';
 import { Repertoire } from '../../models/repertoire';
 import { useStore } from '../../store';
 
-export const RepertoireSelect = () => {
+export const RepertoireSelect = observer(() => {
     const store = useStore();
     const supabase = useSupabase();
 
@@ -27,9 +28,14 @@ export const RepertoireSelect = () => {
     });
 
     if (status === 'success') {
-        const handleChange = action((event: SelectChangeEvent) => {
+        const handleChange = action("setRepertoire", (event: SelectChangeEvent) => {
             const repertoireId = event.target.value as string;
-            store.ui.repertoire = repertoires!.find(r => r.id = repertoireId);
+
+            if (repertoireId === "") {
+                store.ui.repertoire = undefined;
+            } else {
+                store.ui.repertoire = repertoires!.find(r => r.id === repertoireId);
+            }
         });
 
         return (
@@ -39,11 +45,11 @@ export const RepertoireSelect = () => {
                     labelId="repertoire-select-label"
                     id="repertoire-select"
                     variant="standard"
-                    value={store.ui.repertoire?.id}
+                    value={store.ui.repertoire?.id || ""}
                     label="Repertoire"
                     onChange={handleChange}
                 >
-                    <MenuItem value={undefined}>
+                    <MenuItem value="">
                         <em>None</em>
                     </MenuItem>
                     {repertoires!.map((r) => (
@@ -57,4 +63,4 @@ export const RepertoireSelect = () => {
     } else {
         return null;
     }
-};
+});

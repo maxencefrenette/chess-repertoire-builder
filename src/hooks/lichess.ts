@@ -4,21 +4,21 @@ const fetcher = (url: string) => fetch(url).then(res => res.json())
 
 
 export interface LichessOpeningPosition {
-    white: number;
-    draws: number;
-    black: number;
-    averageRating: number;
-    moves: LichessOpeningMove[];
-    opening: string | null;
+    readonly white: number;
+    readonly draws: number;
+    readonly black: number;
+    readonly averageRating: number;
+    readonly moves: readonly LichessOpeningMove[];
+    readonly opening: string | null;
 }
 
 export interface LichessOpeningMove {
-    uci: string;
-    san: string;
-    white: number;
-    draws: number;
-    black: number;
-    averageRating: number;
+    readonly uci: string;
+    readonly san: string;
+    readonly white: number;
+    readonly draws: number;
+    readonly black: number;
+    readonly averageRating: number;
 }
 
 export function useLichessOpeningPosition(fen: string) {
