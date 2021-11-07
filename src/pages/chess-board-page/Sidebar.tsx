@@ -13,7 +13,7 @@ import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { score } from '../../helpers/chess';
-import { useOpeningPosition } from '../../hooks/api';
+import { useLichessOpeningPosition } from '../../hooks/lichess';
 import { useStore } from '../../store';
 import { MovesBreadcrumbs } from './MovesBreadcrumbs';
 import { RepertoireSelect } from './RepertoireSelect';
@@ -21,7 +21,7 @@ import { RepertoireSelect } from './RepertoireSelect';
 export const Sidebar: React.FC = observer(() => {
     const store = useStore();
 
-    const openingStatsResponse = useOpeningPosition(store.ui.position.fen());
+    const openingStatsResponse = useLichessOpeningPosition(store.ui.position.fen());
 
     if (!openingStatsResponse.data) {
         return <div>Loading...</div>;

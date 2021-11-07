@@ -3,16 +3,16 @@ import useSWR from "swr"
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
 
-export interface OpeningPosition {
+export interface LichessOpeningPosition {
     white: number;
     draws: number;
     black: number;
     averageRating: number;
-    moves: OpeningMove[];
+    moves: LichessOpeningMove[];
     opening: string | null;
 }
 
-export interface OpeningMove {
+export interface LichessOpeningMove {
     uci: string;
     san: string;
     white: number;
@@ -21,6 +21,6 @@ export interface OpeningMove {
     averageRating: number;
 }
 
-export function useOpeningPosition(fen: string) {
-    return useSWR<OpeningPosition, any>(`https://explorer.lichess.ovh/master?fen=${encodeURIComponent(fen)}`, fetcher)
+export function useLichessOpeningPosition(fen: string) {
+    return useSWR<LichessOpeningPosition, any>(`https://explorer.lichess.ovh/master?fen=${encodeURIComponent(fen)}`, fetcher)
 }

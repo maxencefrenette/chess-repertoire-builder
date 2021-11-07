@@ -1,5 +1,5 @@
 import { Chess } from 'chess.ts';
-import { OpeningMove } from '../hooks/api';
+import { LichessOpeningMove } from '../hooks/lichess';
 
 export const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
 export type File = typeof files[number];
@@ -33,7 +33,7 @@ export function generateLegalMovesForChessboard(
     return moves;
 }
 
-export function score(move: OpeningMove) {
+export function score(move: LichessOpeningMove) {
     const totalGames = move.white + move.draws + move.black;
     return (move.white + move.draws / 2) / totalGames;
 }
