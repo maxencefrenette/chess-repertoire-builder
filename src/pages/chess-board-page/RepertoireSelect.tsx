@@ -39,7 +39,7 @@ export const RepertoireSelect = () => {
                     labelId="repertoire-select-label"
                     id="repertoire-select"
                     variant="standard"
-                    value={undefined}
+                    value={store.ui.repertoire?.id}
                     label="Repertoire"
                     onChange={handleChange}
                 >
