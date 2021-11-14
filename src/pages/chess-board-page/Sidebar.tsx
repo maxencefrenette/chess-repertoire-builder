@@ -9,6 +9,7 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Tooltip
 } from '@mui/material';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -29,7 +30,7 @@ export const Sidebar: React.FC = observer(() => {
 
     const fen = store.ui.position.fen();
 
-    const {data: lichessOpeningStats} = useLichessOpeningPosition(
+    const { data: lichessOpeningStats } = useLichessOpeningPosition(
         store.ui.position.fen()
     );
 
@@ -66,16 +67,20 @@ export const Sidebar: React.FC = observer(() => {
 
         if (store.ui.position.turn() === 'b') {
             const totalGames = games(lichessOpeningStats);
-            const gamesAfterMove = games(lichessOpeningStats.moves.find(moveStats => moveStats.san === moveSan)!);
+            const gamesAfterMove = games(
+                lichessOpeningStats.moves.find(
+                    (moveStats) => moveStats.san === moveSan
+                )!
+            );
 
             frequency *= gamesAfterMove / totalGames;
         }
-        
-        await supabase.from<Position>("positions").insert({
+
+        await supabase.from<Position>('positions').insert({
             fen,
             repertoire_id: repertoirePosition?.repertoire_id,
             frequency,
-        })
+        });
     };
 
     return (
@@ -124,17 +129,21 @@ export const Sidebar: React.FC = observer(() => {
                                             event.stopPropagation()
                                         }
                                     >
-                                        <IconButton
-                                            color="primary"
-                                            disabled={
-                                                !currentPositionIsInRepertoire
-                                            }
-                                            onClick={() =>
-                                                handleAddToRepertoire(move.san)
-                                            }
-                                        >
-                                            <AddIcon />
-                                        </IconButton>
+                                        <Tooltip title="Add to repertoire">
+                                            <IconButton
+                                                color="primary"
+                                                disabled={
+                                                    !currentPositionIsInRepertoire
+                                                }
+                                                onClick={() =>
+                                                    handleAddToRepertoire(
+                                                        move.san
+                                                    )
+                                                }
+                                            >
+                                                <AddIcon />
+                                            </IconButton>
+                                        </Tooltip>
                                     </TableCell>
                                 )}
                                 <TableCell>{move.san}</TableCell>

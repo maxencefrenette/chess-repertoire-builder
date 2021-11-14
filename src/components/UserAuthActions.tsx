@@ -1,4 +1,4 @@
-import { Button, IconButton, Menu, MenuItem } from '@mui/material';
+import { Button, IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import React from 'react';
 import { useSupabase } from '../hooks/supabase';
 import { Link as RouterLink } from '@reach/router';
@@ -15,11 +15,7 @@ export const UserAuthActions = observer(() => {
     // Use the store instead of supabase to check if the user is logged in in order to trigger appropriate rerenders through mobx
     if (store.ui.isLoggedIn === false) {
         return (
-            <Button
-                component={RouterLink}
-                to="/login"
-                color="inherit"
-            >
+            <Button component={RouterLink} to="/login" color="inherit">
                 Login
             </Button>
         );
@@ -35,20 +31,22 @@ export const UserAuthActions = observer(() => {
         const handleLogout = () => {
             supabase.auth.signOut();
             handleClose();
-        }
+        };
 
         return (
             <>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleMenu}
-                    color="inherit"
-                >
-                    <AccountCircle />
-                </IconButton>
+                <Tooltip title={supabase.auth.user()?.email || ""}>
+                    <IconButton
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleMenu}
+                        color="inherit"
+                    >
+                        <AccountCircle />
+                    </IconButton>
+                </Tooltip>
                 <Menu
                     id="menu-appbar"
                     anchorEl={anchorEl}
