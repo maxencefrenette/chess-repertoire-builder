@@ -1,5 +1,4 @@
 import { Chess } from 'chess.ts';
-import { LichessOpeningMove, LichessOpeningPosition } from '../hooks/lichess';
 
 export const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
 export type File = typeof files[number];
@@ -31,14 +30,6 @@ export function generateLegalMovesForChessboard(
     });
 
     return moves;
-}
-
-export function score(move: LichessOpeningMove) {
-    return (move.white + move.draws / 2) / games(move);
-}
-
-export function games(position: LichessOpeningPosition | LichessOpeningMove) {
-    return position.white + position.draws + position.black;
 }
 
 export function getLastMoveTuple(

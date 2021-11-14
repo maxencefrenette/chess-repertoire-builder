@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { useStore } from '../store';
+import { useStore } from '../../store';
 import { action, runInAction } from 'mobx';
 
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;

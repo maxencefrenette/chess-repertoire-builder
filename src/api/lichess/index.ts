@@ -24,3 +24,11 @@ export interface LichessOpeningMove {
 export function useLichessOpeningPosition(fen: string) {
     return useSWR<LichessOpeningPosition, any>(`https://explorer.lichess.ovh/master?fen=${encodeURIComponent(fen)}`, fetcher)
 }
+
+export function score(move: LichessOpeningMove) {
+    return (move.white + move.draws / 2) / games(move);
+}
+
+export function games(position: LichessOpeningPosition | LichessOpeningMove) {
+    return position.white + position.draws + position.black;
+}

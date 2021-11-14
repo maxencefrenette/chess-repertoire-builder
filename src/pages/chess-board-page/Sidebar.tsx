@@ -14,15 +14,14 @@ import {
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { games, score } from '../../helpers/chess';
-import { useLichessOpeningPosition } from '../../hooks/lichess';
+import { useLichessOpeningPosition, games, score } from '../../api/lichess';
 import { useStore } from '../../store';
 import { MovesBreadcrumbs } from './MovesBreadcrumbs';
 import { RepertoireSelect } from './RepertoireSelect';
 import AddIcon from '@mui/icons-material/Add';
 import { useQuery } from 'react-query';
 import { Position } from '../../models/position';
-import { useSupabase } from '../../hooks/supabase';
+import { useSupabase } from '../../api/supabase';
 
 export const Sidebar: React.FC = observer(() => {
     const store = useStore();

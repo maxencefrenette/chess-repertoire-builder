@@ -9,7 +9,7 @@ import {
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { useQuery } from 'react-query';
-import { useSupabase } from '../../hooks/supabase';
+import { useSupabase } from '../../api/supabase';
 import { Repertoire } from '../../models/repertoire';
 import { useStore } from '../../store';
 

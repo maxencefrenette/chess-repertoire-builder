@@ -1,6 +1,6 @@
 import { Button, IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import React from 'react';
-import { useSupabase } from '../hooks/supabase';
+import { useSupabase } from '../api/supabase';
 import { Link as RouterLink } from '@reach/router';
 import { AccountCircle } from '@mui/icons-material';
 import { useStore } from '../store';

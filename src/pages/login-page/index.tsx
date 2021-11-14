@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { RouteComponentProps } from '@reach/router';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useSupabase } from '../../hooks/supabase';
+import { useSupabase } from '../../api/supabase';
 
 export const LoginPage: React.FC<RouteComponentProps> = () => {
     const supabase = useSupabase();
