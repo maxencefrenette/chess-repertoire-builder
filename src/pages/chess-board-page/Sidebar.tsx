@@ -14,54 +14,41 @@ import {
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { useLichessOpeningPosition, games, score } from '../../api/lichess';
+import { useLichessOpeningPosition, score } from '../../api/lichess';
 import { useStore } from '../../store';
 import { MovesBreadcrumbs } from './MovesBreadcrumbs';
 import { RepertoireSelect } from './RepertoireSelect';
 import AddIcon from '@mui/icons-material/Add';
-import { Position } from '../../api/supabase/models/position';
-import { useSupabase, useRepertoirePosition } from '../../api/supabase';
+import {
+    useRepertoirePosition,
+    useAddPositionToRepertoire,
+} from '../../api/supabase';
 
 export const Sidebar: React.FC = observer(() => {
     const store = useStore();
-    const supabase = useSupabase();
 
     const fen = store.ui.position.fen();
 
     const { data: lichessOpeningStats } = useLichessOpeningPosition(fen);
     const { data: repertoirePosition } = useRepertoirePosition(fen);
+    const addPositionToRepertoire = useAddPositionToRepertoire();
 
     if (!lichessOpeningStats || repertoirePosition === undefined) {
         return <div>Loading...</div>;
     }
 
+    const handleAddToRepertoire = (moveSan: string) => {
+        if (repertoirePosition === null) throw new Error('unreachable');
+
+        addPositionToRepertoire(
+            repertoirePosition,
+            lichessOpeningStats,
+            moveSan
+        );
+    };
+
     const showRepertoireActionsColumn = store.ui.repertoire !== undefined;
     const currentPositionIsInRepertoire = repertoirePosition !== null;
-
-    const handleAddToRepertoire = async (moveSan: string) => {
-        const newPosition = store.ui.position.clone();
-        newPosition.move(moveSan);
-        const fen = newPosition.fen();
-
-        let frequency = repertoirePosition!.frequency;
-
-        if (store.ui.position.turn() === 'b') {
-            const totalGames = games(lichessOpeningStats);
-            const gamesAfterMove = games(
-                lichessOpeningStats.moves.find(
-                    (moveStats) => moveStats.san === moveSan
-                )!
-            );
-
-            frequency *= gamesAfterMove / totalGames;
-        }
-
-        await supabase.from<Position>('positions').insert({
-            fen,
-            repertoire_id: repertoirePosition?.repertoire_id,
-            frequency,
-        });
-    };
 
     return (
         <Paper>
