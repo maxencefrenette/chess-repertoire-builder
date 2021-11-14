@@ -20,7 +20,7 @@ import { MovesBreadcrumbs } from './MovesBreadcrumbs';
 import { RepertoireSelect } from './RepertoireSelect';
 import AddIcon from '@mui/icons-material/Add';
 import { useQuery } from 'react-query';
-import { Position } from '../../models/Position';
+import { Position } from '../../models/position';
 import { useSupabase } from '../../hooks/supabase';
 
 export const Sidebar: React.FC = observer(() => {
