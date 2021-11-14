@@ -2,6 +2,7 @@ import { Chess } from "chess.ts";
 import { useQuery } from "react-query";
 import { useSupabase, Position } from ".";
 import { games, LichessOpeningPosition } from "../lichess";
+import { PositionChild } from "./models/position_child";
 
 export function useRepertoirePosition(fen: string) {
     const supabase = useSupabase();
@@ -33,9 +34,9 @@ export function useAddPositionToRepertoire() {
         newPosition.move(moveSan);
         const newFen = newPosition.fen();
 
-        let frequency = repertoirePosition!.frequency;
-
+        let moveFrequency = 1;
         if (currentPosition.turn() === 'b') {
+
             const totalGames = games(lichessOpeningPosition);
             const gamesAfterMove = games(
                 lichessOpeningPosition.moves.find(
@@ -43,13 +44,25 @@ export function useAddPositionToRepertoire() {
                 )!
             );
 
-            frequency *= gamesAfterMove / totalGames;
+            moveFrequency = gamesAfterMove / totalGames;
         }
 
+        // TODO: account for transpositions
+        const childFrequency = repertoirePosition.frequency * moveFrequency;
+
+        // TODO: move this to a stored procedure to make it faster and transactional
         await supabase.from<Position>('positions').insert({
+            repertoire_id: repertoirePosition.repertoire_id,
             fen: newFen,
-            repertoire_id: repertoirePosition?.repertoire_id,
-            frequency,
+            frequency: childFrequency,
+        });
+
+        await supabase.from<PositionChild>('positions_children').insert({
+            repertoire_id: repertoirePosition.repertoire_id,
+            parent_fen: currentFen,
+            child_fen: newFen,
+            move: moveSan,
+            move_frequency: moveFrequency,
         });
     };
 }
