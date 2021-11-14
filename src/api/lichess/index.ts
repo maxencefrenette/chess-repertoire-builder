@@ -1,7 +1,4 @@
-import useSWR from "swr"
-
-const fetcher = (url: string) => fetch(url).then(res => res.json())
-
+import { useQuery } from 'react-query';
 
 export interface LichessOpeningPosition {
     readonly white: number;
@@ -9,7 +6,7 @@ export interface LichessOpeningPosition {
     readonly black: number;
     readonly averageRating: number;
     readonly moves: readonly LichessOpeningMove[];
-    readonly opening: string | null;
+    readonly opening: string | null;
 }
 
 export interface LichessOpeningMove {
@@ -22,7 +19,17 @@ export interface LichessOpeningMove {
 }
 
 export function useLichessOpeningPosition(fen: string) {
-    return useSWR<LichessOpeningPosition, any>(`https://explorer.lichess.ovh/master?fen=${encodeURIComponent(fen)}`, fetcher)
+    return useQuery<LichessOpeningPosition>(
+        ['lichess-opening-position', fen],
+        async () => {
+            const res = await fetch(
+                `https://explorer.lichess.ovh/master?fen=${encodeURIComponent(
+                    fen
+                )}`
+            );
+            return await res.json();
+        }
+    );
 }
 
 export function score(move: LichessOpeningMove) {
