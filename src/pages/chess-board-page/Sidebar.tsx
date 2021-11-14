@@ -9,7 +9,7 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Tooltip
+    Tooltip,
 } from '@mui/material';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -19,9 +19,8 @@ import { useStore } from '../../store';
 import { MovesBreadcrumbs } from './MovesBreadcrumbs';
 import { RepertoireSelect } from './RepertoireSelect';
 import AddIcon from '@mui/icons-material/Add';
-import { useQuery } from 'react-query';
-import { Position } from '../../models/position';
-import { useSupabase } from '../../api/supabase';
+import { Position } from '../../api/supabase/models/position';
+import { useSupabase, useRepertoirePosition } from '../../api/supabase';
 
 export const Sidebar: React.FC = observer(() => {
     const store = useStore();
@@ -29,26 +28,8 @@ export const Sidebar: React.FC = observer(() => {
 
     const fen = store.ui.position.fen();
 
-    const { data: lichessOpeningStats } = useLichessOpeningPosition(
-        store.ui.position.fen()
-    );
-
-    const { data: repertoirePosition } = useQuery(
-        ['positions', fen],
-        async () => {
-            const { data, error } = await supabase
-                .from<Position>('positions')
-                .select()
-                .eq('fen', fen)
-                .maybeSingle();
-
-            if (error !== null) {
-                throw error;
-            }
-
-            return data;
-        }
-    );
+    const { data: lichessOpeningStats } = useLichessOpeningPosition(fen);
+    const { data: repertoirePosition } = useRepertoirePosition(fen);
 
     if (!lichessOpeningStats || repertoirePosition === undefined) {
         return <div>Loading...</div>;

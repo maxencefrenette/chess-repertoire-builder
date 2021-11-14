@@ -9,8 +9,7 @@ import {
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { useQuery } from 'react-query';
-import { useSupabase } from '../../api/supabase';
-import { Repertoire } from '../../models/repertoire';
+import { useSupabase, Repertoire } from '../../api/supabase';
 import { useStore } from '../../store';
 
 export const RepertoireSelect = observer(() => {
