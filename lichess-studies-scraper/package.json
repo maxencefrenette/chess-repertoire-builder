@@ -1,0 +1,18 @@
+{
+  "name": "lichess-studies-scraper",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "puppeteer": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.7",
+    "@types/puppeteer": "^5.4.4",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "scrape-ids": "ts-node scrape-ids.ts"
+  }
+}
