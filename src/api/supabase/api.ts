@@ -1,10 +1,13 @@
-import { Chess } from "chess.ts";
-import { useQuery } from "react-query";
-import { useSupabase, Position } from ".";
-import { games, LichessOpeningPosition } from "../lichess";
-import { PositionChild } from "./models/position_child";
+import { Chess } from 'chess.ts';
+import { useQuery } from 'react-query';
+import { useSupabase, Position } from '.';
+import { games, LichessOpeningPosition } from '../lichess';
+import { Move } from './models/move';
 
-export function useRepertoirePosition(fen: string) {
+export function useRepertoirePosition(
+    repertoire_id: string | undefined,
+    fen: string
+) {
     const supabase = useSupabase();
     return useQuery(
         ['positions', fen],
@@ -12,22 +15,52 @@ export function useRepertoirePosition(fen: string) {
             const { data, error } = await supabase
                 .from<Position>('positions')
                 .select()
+                .eq('repertoire_id', repertoire_id!)
                 .eq('fen', fen)
                 .maybeSingle();
-    
+
             if (error !== null) {
                 throw error;
             }
-    
+
             return data;
-        }
+        },
+        { enabled: !!repertoire_id }
+    );
+}
+
+export function useRepertoirePositionMoves(
+    repertoire_id: string | undefined,
+    fen: string
+) {
+    const supabase = useSupabase();
+    return useQuery(
+        ['moves', fen],
+        async () => {
+            const { data, error } = await supabase
+                .from<Move>('moves')
+                .select()
+                .eq('repertoire_id', repertoire_id!)
+                .eq('parent_fen', fen);
+
+            if (error !== null) {
+                throw error;
+            }
+
+            return data!;
+        },
+        { enabled: !!repertoire_id }
     );
 }
 
 export function useAddPositionToRepertoire() {
     const supabase = useSupabase();
 
-    return async (repertoirePosition: Position, lichessOpeningPosition: LichessOpeningPosition, moveSan: string) => {
+    return async (
+        repertoirePosition: Position,
+        lichessOpeningPosition: LichessOpeningPosition,
+        moveSan: string
+    ) => {
         const currentFen = repertoirePosition.fen;
         const currentPosition = new Chess(repertoirePosition.fen);
         const newPosition = currentPosition.clone();
@@ -36,7 +69,6 @@ export function useAddPositionToRepertoire() {
 
         let moveFrequency = 1;
         if (currentPosition.turn() === 'b') {
-
             const totalGames = games(lichessOpeningPosition);
             const gamesAfterMove = games(
                 lichessOpeningPosition.moves.find(
@@ -57,7 +89,7 @@ export function useAddPositionToRepertoire() {
             frequency: childFrequency,
         });
 
-        await supabase.from<PositionChild>('positions_children').insert({
+        await supabase.from<Move>('moves').insert({
             repertoire_id: repertoirePosition.repertoire_id,
             parent_fen: currentFen,
             child_fen: newFen,

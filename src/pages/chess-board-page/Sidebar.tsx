@@ -22,26 +22,42 @@ import AddIcon from '@mui/icons-material/Add';
 import {
     useRepertoirePosition,
     useAddPositionToRepertoire,
+    useRepertoirePositionMoves,
 } from '../../api/supabase';
 
 export const Sidebar: React.FC = observer(() => {
     const store = useStore();
 
     const fen = store.ui.position.fen();
+    const repertoire_id = store.ui.repertoire?.id;
 
     const { data: lichessOpeningStats } = useLichessOpeningPosition(fen);
-    const { data: repertoirePosition } = useRepertoirePosition(fen);
+    const { data: repertoirePosition } = useRepertoirePosition(
+        repertoire_id,
+        fen
+    );
+    const { data: repertoirePositionMoves } = useRepertoirePositionMoves(
+        repertoire_id,
+        fen
+    );
     const addPositionToRepertoire = useAddPositionToRepertoire();
 
-    if (!lichessOpeningStats || repertoirePosition === undefined) {
+    if (
+        !lichessOpeningStats ||
+        (repertoire_id &&
+            (repertoirePosition === undefined ||
+                repertoirePositionMoves === undefined))
+    ) {
         return <div>Loading...</div>;
     }
+
+    console.log(repertoirePositionMoves);
 
     const handleAddToRepertoire = (moveSan: string) => {
         if (repertoirePosition === null) throw new Error('unreachable');
 
         addPositionToRepertoire(
-            repertoirePosition,
+            repertoirePosition!,
             lichessOpeningStats,
             moveSan
         );
@@ -77,53 +93,53 @@ export const Sidebar: React.FC = observer(() => {
                             () => (store.ui.hoveredMoveUci = undefined)
                         )}
                     >
-                        {lichessOpeningStats.moves.map((move) => (
-                            <TableRow
-                                key={move.san}
-                                hover={true}
-                                onClick={action(() => {
-                                    store.ui.hoveredMoveUci = undefined;
-                                    store.ui.makeMove(move.san);
-                                })}
-                                onMouseEnter={action(
-                                    () => (store.ui.hoveredMoveUci = move.uci)
-                                )}
-                            >
-                                {showRepertoireActionsColumn && (
-                                    <TableCell
-                                        sx={{ padding: '6px' }}
-                                        onClick={(event) =>
-                                            event.stopPropagation()
-                                        }
-                                    >
-                                        <Tooltip title="Add to repertoire">
-                                            <IconButton
-                                                color="primary"
-                                                disabled={
-                                                    !currentPositionIsInRepertoire
-                                                }
-                                                onClick={() =>
-                                                    handleAddToRepertoire(
-                                                        move.san
-                                                    )
-                                                }
-                                            >
-                                                <AddIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </TableCell>
-                                )}
-                                <TableCell>{move.san}</TableCell>
-                                <TableCell>
-                                    {score(move).toLocaleString(undefined, {
-                                        style: 'percent',
+                        {lichessOpeningStats.moves.map((move) => {
+                            const moveIsInRepertoire = !!repertoirePositionMoves && !!repertoirePositionMoves.find(m => m.move === move.san);
+                            const rowBackgroundColor = moveIsInRepertoire ? '#ccc' : 'unset';
+
+                            return (
+                                <TableRow
+                                    key={move.san}
+                                    hover={true}
+                                    onClick={action(() => {
+                                        store.ui.hoveredMoveUci = undefined;
+                                        store.ui.makeMove(move.san);
                                     })}
-                                </TableCell>
-                                <TableCell>
-                                    {move.white + move.draws + move.black}
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                    onMouseEnter={action(
+                                        () => (store.ui.hoveredMoveUci = move.uci)
+                                    )}
+                                    sx={{ backgroundColor: rowBackgroundColor }}
+                                >
+                                    {showRepertoireActionsColumn && (
+                                        <TableCell
+                                            sx={{ padding: '6px' }}
+                                            onClick={(event) => event.stopPropagation()}
+                                        >
+                                            <Tooltip title="Add to repertoire">
+                                                <IconButton
+                                                    color="primary"
+                                                    disabled={!currentPositionIsInRepertoire}
+                                                    onClick={() => handleAddToRepertoire(
+                                                        move.san
+                                                    )}
+                                                >
+                                                    <AddIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </TableCell>
+                                    )}
+                                    <TableCell>{move.san}</TableCell>
+                                    <TableCell>
+                                        {score(move).toLocaleString(undefined, {
+                                            style: 'percent',
+                                        })}
+                                    </TableCell>
+                                    <TableCell>
+                                        {move.white + move.draws + move.black}
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>
