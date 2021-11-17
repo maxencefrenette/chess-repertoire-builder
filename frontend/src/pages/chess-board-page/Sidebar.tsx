@@ -51,11 +51,7 @@ export const Sidebar: React.FC = observer(() => {
         return <div>Loading...</div>;
     }
 
-    console.log(repertoirePositionMoves);
-
     const handleAddToRepertoire = (moveSan: string) => {
-        if (repertoirePosition === null) throw new Error('unreachable');
-
         addPositionToRepertoire(
             repertoirePosition!,
             lichessOpeningStats,
