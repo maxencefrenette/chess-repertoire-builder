@@ -161,13 +161,6 @@ export const Sidebar: React.FC = observer(() => {
     );
 });
 
-/*
-onMouseEnter={action(
-    () => (store.ui.hoveredMoveUci = move.uci)
-)}
-
-*/
-
 function formatPercent(params: GridValueFormatterParams) {
     return params.value?.toLocaleString(undefined, {
         style: 'percent',
