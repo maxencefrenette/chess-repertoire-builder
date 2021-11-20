@@ -23,13 +23,22 @@ export const ChessBoard: React.FC = observer(() => {
         const moveSan = store.ui.hoveredMove;
 
         const position = store.ui.position.clone();
-        const move = position.move(moveSan)!;
+        const move = position.move(moveSan);
 
-        highlightedMove = {
-            orig: move.from as Square,
-            dest: move.to as Square,
-            brush: 'paleBlue',
-        };
+        if (move === null) {
+            console.error('Could not display hovered move', {
+                moveSan,
+                position,
+                move,
+            });
+            throw new Error('Could not display hovered move');
+        } else {
+            highlightedMove = {
+                orig: move.from as Square,
+                dest: move.to as Square,
+                brush: 'paleBlue',
+            };
+        }
     }
 
     return (
