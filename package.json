@@ -1,10 +1,19 @@
 {
-    "private": true,
-    "workspaces": [
-        "frontend",
-        "lichess-studies-scraper"
-    ],
-    "scripts": {
-        "start": "yarn workspace frontend start"
-    }
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "lichess-studies-scraper"
+  ],
+  "scripts": {
+    "start": "yarn workspace frontend start",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^7.0.4",
+    "lint-staged": "^12.0.3",
+    "prettier": "^2.4.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,json,css,md}": "prettier --write"
+  }
 }
