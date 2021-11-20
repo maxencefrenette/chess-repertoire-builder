@@ -149,10 +149,18 @@ export const Sidebar: React.FC = observer(() => {
                 })}
                 componentsProps={{
                     row: {
-                        onMouseOver: (event: React.MouseEvent) => {
+                        onMouseEnter: (event: React.MouseEvent) => {
                             const moveSan =
                                 event.currentTarget.getAttribute('data-id')!;
                             store.ui.hoveredMove = moveSan;
+                        },
+                        onMouseLeave: (event: React.MouseEvent) => {
+                            const moveSan =
+                                event.currentTarget.getAttribute('data-id')!;
+
+                            if (store.ui.hoveredMove === moveSan) {
+                                store.ui.hoveredMove = undefined;
+                            }
                         },
                     },
                 }}
