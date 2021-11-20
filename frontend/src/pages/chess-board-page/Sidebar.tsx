@@ -1,20 +1,8 @@
-import {
-    Box,
-    Divider,
-    IconButton,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Tooltip,
-} from '@mui/material';
+import { Box, Divider, IconButton, Paper, Tooltip } from '@mui/material';
 import { action } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { useLichessOpeningPosition, score } from '../../api/lichess';
+import { useLichessOpeningPosition, score, games } from '../../api/lichess';
 import { useStore } from '../../store';
 import { MovesBreadcrumbs } from './MovesBreadcrumbs';
 import { RepertoireSelect } from './RepertoireSelect';
@@ -24,27 +12,33 @@ import {
     useAddPositionToRepertoire,
     useRepertoirePositionMoves,
 } from '../../api/supabase';
+import {
+    DataGrid,
+    GridColDef,
+    GridValueFormatterParams,
+} from '@mui/x-data-grid';
+import './Sidebar.css';
 
 export const Sidebar: React.FC = observer(() => {
     const store = useStore();
 
     const fen = store.ui.position.fen();
-    const repertoire_id = store.ui.repertoire?.id;
+    const repertoireId = store.ui.repertoire?.id;
 
     const { data: lichessOpeningStats } = useLichessOpeningPosition(fen);
     const { data: repertoirePosition } = useRepertoirePosition(
-        repertoire_id,
+        repertoireId,
         fen
     );
     const { data: repertoirePositionMoves } = useRepertoirePositionMoves(
-        repertoire_id,
+        repertoireId,
         fen
     );
     const addPositionToRepertoire = useAddPositionToRepertoire();
 
     if (
         !lichessOpeningStats ||
-        (repertoire_id &&
+        (repertoireId &&
             (repertoirePosition === undefined ||
                 repertoirePositionMoves === undefined))
     ) {
@@ -59,8 +53,76 @@ export const Sidebar: React.FC = observer(() => {
         );
     };
 
-    const showRepertoireActionsColumn = store.ui.repertoire !== undefined;
+    const repertoireSelected = store.ui.repertoire !== undefined;
     const currentPositionIsInRepertoire = repertoirePosition !== null;
+
+    const columns: GridColDef[] = [
+        {
+            field: 'add_to_repertoire',
+            headerName: '',
+            disableColumnMenu: true,
+            hideSortIcons: true,
+            width: 51,
+            align: 'center',
+            renderCell: ({ row }) => {
+                return (
+                    <Tooltip title="Add to repertoire">
+                        <IconButton
+                            color="primary"
+                            disabled={!currentPositionIsInRepertoire}
+                            onClick={() => handleAddToRepertoire(row.id)}
+                        >
+                            <AddIcon />
+                        </IconButton>
+                    </Tooltip>
+                );
+            },
+        },
+        {
+            field: 'id',
+            headerName: 'Move',
+            width: 120,
+        },
+        {
+            field: 'score',
+            headerName: 'Score',
+            width: 120,
+            valueFormatter: formatPercent,
+        },
+        {
+            field: 'games',
+            width: 120,
+            headerName: 'Games',
+        },
+        {
+            field: 'frequency',
+            headerName: 'Frequency',
+            width: 120,
+            valueFormatter: formatFrequency,
+            hide: !repertoireSelected,
+        },
+    ];
+
+    const rows = store.ui.position
+        .moves()
+        .map((moveSan) => {
+            const lichessMove = lichessOpeningStats.moves.find(
+                (m) => m.san === moveSan
+            );
+
+            const repertoireMove = repertoirePositionMoves?.find(
+                (m) => m.move === moveSan
+            );
+
+            return {
+                id: moveSan,
+                score: lichessMove && score(lichessMove),
+                games: lichessMove && games(lichessMove),
+                frequency: repertoireMove && repertoireMove.move_frequency,
+                isInRepertoire: !!repertoireMove,
+            };
+        })
+        .filter((row) => row.games || row.frequency);
 
     return (
         <Paper>
@@ -72,73 +134,58 @@ export const Sidebar: React.FC = observer(() => {
                 <MovesBreadcrumbs />
             </Box>
             <Divider />
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            {showRepertoireActionsColumn && (
-                                <TableCell sx={{ width: '16px' }}></TableCell>
-                            )}
-                            <TableCell>Move</TableCell>
-                            <TableCell>Score</TableCell>
-                            <TableCell>Games</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody
-                        onMouseLeave={action(
-                            () => (store.ui.hoveredMoveUci = undefined)
-                        )}
-                    >
-                        {lichessOpeningStats.moves.map((move) => {
-                            const moveIsInRepertoire = !!repertoirePositionMoves && !!repertoirePositionMoves.find(m => m.move === move.san);
-                            const rowBackgroundColor = moveIsInRepertoire ? '#ccc' : 'unset';
-
-                            return (
-                                <TableRow
-                                    key={move.san}
-                                    hover={true}
-                                    onClick={action(() => {
-                                        store.ui.hoveredMoveUci = undefined;
-                                        store.ui.makeMove(move.san);
-                                    })}
-                                    onMouseEnter={action(
-                                        () => (store.ui.hoveredMoveUci = move.uci)
-                                    )}
-                                    sx={{ backgroundColor: rowBackgroundColor }}
-                                >
-                                    {showRepertoireActionsColumn && (
-                                        <TableCell
-                                            sx={{ padding: '6px' }}
-                                            onClick={(event) => event.stopPropagation()}
-                                        >
-                                            <Tooltip title="Add to repertoire">
-                                                <IconButton
-                                                    color="primary"
-                                                    disabled={!currentPositionIsInRepertoire}
-                                                    onClick={() => handleAddToRepertoire(
-                                                        move.san
-                                                    )}
-                                                >
-                                                    <AddIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </TableCell>
-                                    )}
-                                    <TableCell>{move.san}</TableCell>
-                                    <TableCell>
-                                        {score(move).toLocaleString(undefined, {
-                                            style: 'percent',
-                                        })}
-                                    </TableCell>
-                                    <TableCell>
-                                        {move.white + move.draws + move.black}
-                                    </TableCell>
-                                </TableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <DataGrid
+                rows={rows}
+                columns={columns}
+                autoHeight={true}
+                hideFooter={true}
+                sortModel={[{ field: 'games', sort: 'desc' }]}
+                getRowClassName={({ row }) =>
+                    row.isInRepertoire ? 'row-in-repertoire' : ''
+                }
+                onRowClick={action(({ row }) => {
+                    store.ui.hoveredMove = undefined;
+                    store.ui.makeMove(row.id);
+                })}
+                componentsProps={{
+                    row: {
+                        onMouseOver: (event: React.MouseEvent) => {
+                            const moveSan =
+                                event.currentTarget.getAttribute('data-id')!;
+                            store.ui.hoveredMove = moveSan;
+                        },
+                    },
+                }}
+            />
         </Paper>
     );
 });
+
+/*
+onMouseEnter={action(
+    () => (store.ui.hoveredMoveUci = move.uci)
+)}
+
+*/
+
+function formatPercent(params: GridValueFormatterParams) {
+    return params.value?.toLocaleString(undefined, {
+        style: 'percent',
+        minimumFractionDigits: 2,
+    });
+}
+
+function formatFrequency(params: GridValueFormatterParams) {
+    const value = params.value;
+
+    if (typeof value !== 'number' || value <= 0) {
+        return;
+    } else if (value > 0.5) {
+        return value.toLocaleString(undefined, {
+            style: 'percent',
+            minimumFractionDigits: 2,
+        });
+    } else {
+        return `1 in ${Math.round(1 / value)}`;
+    }
+}

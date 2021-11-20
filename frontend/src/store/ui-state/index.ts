@@ -6,14 +6,14 @@ import { Repertoire } from '../../api/supabase';
 export class UiState {
     isLoggedIn: boolean | undefined = undefined;
     position: Chess;
-    hoveredMoveUci: string | undefined;
+    hoveredMove: string | undefined;
     repertoire: Repertoire | undefined;
 
     constructor() {
         makeObservable(this, {
             isLoggedIn: observable,
             position: observable,
-            hoveredMoveUci: observable,
+            hoveredMove: observable,
             repertoire: observable,
             makeMove: action,
             makeMoveFromTo: action,

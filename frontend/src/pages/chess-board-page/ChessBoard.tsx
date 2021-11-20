@@ -19,11 +19,15 @@ export const ChessBoard: React.FC = observer(() => {
 
     let highlightedMove: DrawShape | undefined;
 
-    if (store.ui.hoveredMoveUci) {
-        const move = store.ui.hoveredMoveUci;
+    if (store.ui.hoveredMove) {
+        const moveSan = store.ui.hoveredMove;
+
+        const position = store.ui.position.clone();
+        const move = position.move(moveSan)!;
+
         highlightedMove = {
-            orig: move.slice(0, 2) as Square,
-            dest: move.slice(2, 4) as Square,
+            orig: move.from as Square,
+            dest: move.to as Square,
             brush: 'paleBlue',
         };
     }
