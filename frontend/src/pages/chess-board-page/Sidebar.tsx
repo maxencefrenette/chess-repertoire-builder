@@ -76,7 +76,10 @@ export const Sidebar: React.FC = observer(() => {
               <IconButton
                 color="primary"
                 disabled={!currentPositionIsInRepertoire}
-                onClick={() => handleAddToRepertoire(row.id)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleAddToRepertoire(row.id);
+                }}
               >
                 <AddIcon />
               </IconButton>
