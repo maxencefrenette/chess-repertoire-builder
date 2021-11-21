@@ -111,11 +111,11 @@ export function useRemovePositionFromRepertoire() {
       .delete()
       .match({ repertoire_id, fen });
     const p2 = supabase
-      .from<Position>("moves")
+      .from<Move>("moves")
       .delete()
       .match({ repertoire_id, parent_fen: fen });
     const p3 = supabase
-      .from<Position>("moves")
+      .from<Move>("moves")
       .delete()
       .match({ repertoire_id, child_fen: fen });
 
