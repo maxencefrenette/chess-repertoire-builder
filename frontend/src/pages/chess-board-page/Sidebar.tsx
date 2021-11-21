@@ -27,7 +27,11 @@ export const Sidebar: React.FC = observer(() => {
   const fen = store.ui.position.fen();
   const repertoireId = store.ui.repertoire?.id;
 
-  const { data: lichessOpeningStats } = useLichessOpeningPosition(fen);
+  const { data: lichessOpeningStats } = useLichessOpeningPosition(
+    fen,
+    store.ui.repertoire?.lichess_speeds,
+    store.ui.repertoire?.lichess_ratings
+  );
   const { data: repertoirePosition } = useRepertoirePosition(repertoireId, fen);
   const { data: repertoirePositionMoves } = useRepertoirePositionMoves(
     repertoireId,
