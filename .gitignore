@@ -163,3 +163,8 @@ $RECYCLE.BIN/
 !.env
 .env.local
 .husky
+
+# Supabase
+**/supabase/.temp
+**/supabase/.env
+**/supabase/.globals.sql
