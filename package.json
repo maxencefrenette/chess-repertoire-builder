@@ -6,6 +6,7 @@
     ],
     "scripts": {
         "start": "yarn workspace frontend start",
+        "reset-db": "supabase db restore",
         "prepare": "husky install"
     },
     "devDependencies": {
