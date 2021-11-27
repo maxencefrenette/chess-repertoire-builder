@@ -54,7 +54,7 @@ desc("Start the frontend for local development");
 task("frontend", async (ctx) => {
   dotenv.config({ path: ".env.dev" });
 
-  ctx
+  await ctx
     .env("REACT_APP_SUPABASE_URL", process.env.SUPABASE_URL)
     .env("REACT_APP_SUPABASE_ANON_KEY", process.env.SUPABASE_ANON_KEY)
     .exec("yarn workspace frontend react-scripts start");

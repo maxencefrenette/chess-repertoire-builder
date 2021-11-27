@@ -1,8 +1,8 @@
 import { Chess } from "chess.ts";
 import { useQuery } from "react-query";
-import { useSupabase, Position } from ".";
+import { useSupabase } from ".";
 import { games, LichessOpeningPosition } from "../lichess";
-import { Move } from "./models/move";
+import { Position, Move } from "database/models";
 
 export function useRepertoirePosition(
   repertoire_id: string | undefined,
