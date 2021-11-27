@@ -1,10 +1,10 @@
 import { task, desc } from "foy";
 import dotenv from "dotenv";
 
-dotenv.config({ path: ".env.dev" });
-
 desc("Start the backend for local development");
 task("backend", async (ctx) => {
+  dotenv.config({ path: ".env.dev" });
+
   if (!(await ctx.fs.isDirectory("supabase"))) {
     await ctx.exec("supabase init", { stdio: "ignore" });
 
@@ -22,11 +22,36 @@ task("backend", async (ctx) => {
     ctx.log("supabase init skipped");
   }
 
-  ctx.exec("supabase start");
+  // Cleanup old docker containers
+  const { stdout } = await ctx.exec("docker ps -a -q -f name=supabase", {
+    stdio: "pipe",
+  });
+
+  if (stdout) {
+    const containers = stdout.split("\n").join(" ");
+    await ctx.exec(`docker stop ${containers}`, { stdio: "ignore" });
+    await ctx.exec(`docker rm ${containers}`, { stdio: "ignore" });
+  }
+
+  const supabaseStartProcess = ctx.exec("supabase start");
+
+  // Setup database
+  await ctx.sleep(1500);
+  await ctx.exec(`psql -d '${process.env.DB_URL}' -f database/schema.sql`, {
+    stdio: "ignore",
+  });
+  await ctx
+    .env("SUPABASE_URL", process.env.SUPABASE_URL)
+    .env("SUPABASE_SERVICE_ROLE_KEY", process.env.SUPABASE_SERVICE_ROLE_KEY)
+    .exec("yarn workspace database seed");
+
+  await supabaseStartProcess;
 });
 
 desc("Start the frontend for local development");
 task("frontend", async (ctx) => {
+  dotenv.config({ path: ".env.dev" });
+
   ctx
     .env("REACT_APP_SUPABASE_URL", process.env.SUPABASE_URL)
     .env("REACT_APP_SUPABASE_ANON_KEY", process.env.SUPABASE_ANON_KEY)
