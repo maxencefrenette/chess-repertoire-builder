@@ -136,19 +136,9 @@ export function useRemovePositionFromRepertoire() {
     // TODO: Recursively delete all unreachable positions
     // TODO: Update frequency in child positions that are still reachable
     // TODO: Move this to a stored procedure to make it faster and transactional
-    const p1 = supabase
-      .from<Position>("positions")
-      .delete()
-      .match({ repertoire_id, fen });
-    const p2 = supabase
+    return await supabase
       .from<Move>("moves")
       .delete()
       .match({ repertoire_id, parent_fen: fen });
-    const p3 = supabase
-      .from<Move>("moves")
-      .delete()
-      .match({ repertoire_id, child_fen: fen });
-
-    await Promise.all([p1, p2, p3]);
   };
 }
