@@ -54,13 +54,15 @@ export const AddRemovePositionButton: React.FC<AddRemovePositionButtonProps> =
     } else if (!moveIsInRepertoire) {
       return (
         <Tooltip title="Add to repertoire">
-          <IconButton
-            color="primary"
-            disabled={!currentPositionIsInRepertoire}
-            onClick={handleAddToRepertoire}
-          >
-            <AddIcon />
-          </IconButton>
+          <span>
+            <IconButton
+              color="primary"
+              disabled={!currentPositionIsInRepertoire}
+              onClick={handleAddToRepertoire}
+            >
+              <AddIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       );
     } else {
