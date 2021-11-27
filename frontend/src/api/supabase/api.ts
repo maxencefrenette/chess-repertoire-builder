@@ -1,16 +1,17 @@
 import { Chess } from "chess.ts";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSupabase } from ".";
 import { games, LichessOpeningPosition } from "../lichess";
 import { Position, Move } from "database/models";
 
+export const POSITION_QUERY = "position";
 export function useRepertoirePosition(
   repertoire_id: string | undefined,
   fen: string
 ) {
   const supabase = useSupabase();
   return useQuery(
-    ["positions", fen],
+    [POSITION_QUERY, fen],
     async () => {
       const { data, error } = await supabase
         .from<Position>("positions")
@@ -29,13 +30,14 @@ export function useRepertoirePosition(
   );
 }
 
+const POSITION_MOVES_QUERY = "moves";
 export function useRepertoirePositionMoves(
   repertoire_id: string | undefined,
   fen: string
 ) {
   const supabase = useSupabase();
   return useQuery(
-    ["moves", fen],
+    [POSITION_MOVES_QUERY, fen],
     async () => {
       const { data, error } = await supabase
         .from<Move>("moves")
@@ -53,50 +55,78 @@ export function useRepertoirePositionMoves(
   );
 }
 
+export interface AddPositionToRepertoireArguments {
+  repertoirePosition: Position;
+  lichessOpeningPosition: LichessOpeningPosition;
+  moveSan: string;
+}
+
 export function useAddPositionToRepertoire() {
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
 
-  return async (
-    repertoirePosition: Position,
-    lichessOpeningPosition: LichessOpeningPosition,
-    moveSan: string
-  ) => {
-    const currentFen = repertoirePosition.fen;
-    const currentPosition = new Chess(repertoirePosition.fen);
-    const newPosition = currentPosition.clone();
-    newPosition.move(moveSan);
-    const newFen = newPosition.fen();
+  return useMutation(
+    "useAddPositionToRepertoire",
+    async ({
+      repertoirePosition,
+      lichessOpeningPosition,
+      moveSan,
+    }: AddPositionToRepertoireArguments) => {
+      const currentFen = repertoirePosition.fen;
+      const currentPosition = new Chess(repertoirePosition.fen);
+      const newPosition = currentPosition.clone();
+      newPosition.move(moveSan);
+      const newFen = newPosition.fen();
 
-    let moveFrequency = 1;
-    if (currentPosition.turn() === "b") {
-      const totalGames = games(lichessOpeningPosition);
-      const gamesAfterMove = games(
-        lichessOpeningPosition.moves.find(
-          (moveStats) => moveStats.san === moveSan
-        )!
-      );
+      let moveFrequency = 1;
+      if (currentPosition.turn() === "b") {
+        const totalGames = games(lichessOpeningPosition);
+        const gamesAfterMove = games(
+          lichessOpeningPosition.moves.find(
+            (moveStats) => moveStats.san === moveSan
+          )!
+        );
 
-      moveFrequency = gamesAfterMove / totalGames;
+        moveFrequency = gamesAfterMove / totalGames;
+      }
+
+      // TODO: account for transpositions
+      const childFrequency = repertoirePosition.frequency * moveFrequency;
+
+      // TODO: move this to a stored procedure to make it faster and transactional
+      const { data: position } = await supabase
+        .from<Position>("positions")
+        .insert({
+          repertoire_id: repertoirePosition.repertoire_id,
+          fen: newFen,
+          frequency: childFrequency,
+        })
+        .single();
+
+      const { data: move } = await supabase
+        .from<Move>("moves")
+        .insert({
+          repertoire_id: repertoirePosition.repertoire_id,
+          parent_fen: currentFen,
+          child_fen: newFen,
+          move: moveSan,
+          move_frequency: moveFrequency,
+        })
+        .single();
+
+      return { position, move };
+    },
+    {
+      onSuccess: async (result, variables) => {
+        queryClient.setQueryData<Move[]>(
+          [POSITION_MOVES_QUERY, variables.repertoirePosition.fen],
+          (old) => {
+            return [...old!, result.move!];
+          }
+        );
+      },
     }
-
-    // TODO: account for transpositions
-    const childFrequency = repertoirePosition.frequency * moveFrequency;
-
-    // TODO: move this to a stored procedure to make it faster and transactional
-    await supabase.from<Position>("positions").insert({
-      repertoire_id: repertoirePosition.repertoire_id,
-      fen: newFen,
-      frequency: childFrequency,
-    });
-
-    await supabase.from<Move>("moves").insert({
-      repertoire_id: repertoirePosition.repertoire_id,
-      parent_fen: currentFen,
-      child_fen: newFen,
-      move: moveSan,
-      move_frequency: moveFrequency,
-    });
-  };
+  );
 }
 
 export function useRemovePositionFromRepertoire() {

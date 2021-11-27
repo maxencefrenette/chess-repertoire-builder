@@ -1,4 +1,4 @@
-import { Box, Divider, IconButton, Paper, Tooltip } from "@mui/material";
+import { Box, Divider, Paper } from "@mui/material";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
@@ -6,13 +6,9 @@ import { useLichessOpeningPosition, score, games } from "../../api/lichess";
 import { useStore } from "../../store";
 import { MovesBreadcrumbs } from "./MovesBreadcrumbs";
 import { RepertoireSelect } from "./RepertoireSelect";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {
   useRepertoirePosition,
-  useAddPositionToRepertoire,
   useRepertoirePositionMoves,
-  useRemovePositionFromRepertoire,
 } from "../../api/supabase";
 import {
   DataGrid,
@@ -20,6 +16,7 @@ import {
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import "./Sidebar.css";
+import { AddRemovePositionButton } from "./AddRemovePositionButton";
 
 export const Sidebar: React.FC = observer(() => {
   const store = useStore();
@@ -37,8 +34,6 @@ export const Sidebar: React.FC = observer(() => {
     repertoireId,
     fen
   );
-  const addPositionToRepertoire = useAddPositionToRepertoire();
-  const removePositionFromRepertoire = useRemovePositionFromRepertoire();
 
   if (
     !lichessOpeningStats ||
@@ -48,18 +43,6 @@ export const Sidebar: React.FC = observer(() => {
   ) {
     return <div>Loading...</div>;
   }
-
-  const handleAddToRepertoire = (moveSan: string) => {
-    addPositionToRepertoire(repertoirePosition!, lichessOpeningStats, moveSan);
-  };
-
-  const handleRemoveFromRepertoire = (moveSan: string) => {
-    const position = store.ui.position.clone();
-    position.move(moveSan);
-    const childFen = position.fen();
-
-    removePositionFromRepertoire(store.ui.repertoire!.id, childFen);
-  };
 
   const repertoireSelected = store.ui.repertoire !== undefined;
   const currentPositionIsInRepertoire = repertoirePosition !== null;
@@ -74,33 +57,15 @@ export const Sidebar: React.FC = observer(() => {
       align: "center",
       hide: !repertoireSelected,
       renderCell: ({ row }) => {
-        if (!row.isInRepertoire) {
-          return (
-            <Tooltip title="Add to repertoire">
-              <IconButton
-                color="primary"
-                disabled={!currentPositionIsInRepertoire}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  handleAddToRepertoire(row.id);
-                }}
-              >
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
-          );
-        } else {
-          return (
-            <Tooltip title="Remove from repertoire">
-              <IconButton
-                color="error"
-                onClick={() => handleRemoveFromRepertoire(row.id)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-          );
-        }
+        return (
+          <AddRemovePositionButton
+            moveSan={row.id}
+            repertoirePosition={repertoirePosition!}
+            lichessOpeningPosition={lichessOpeningStats}
+            currentPositionIsInRepertoire={currentPositionIsInRepertoire}
+            moveIsInRepertoire={row.isInRepertoire}
+          />
+        );
       },
     },
     {
