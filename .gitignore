@@ -160,13 +160,6 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/node,windows
 
-!.env
-.env.local
 .husky
-
-# Supabase
-**/supabase/.temp
-**/supabase/.env
-**/supabase/.globals.sql
-
+!/frontend/.env
 /supabase/

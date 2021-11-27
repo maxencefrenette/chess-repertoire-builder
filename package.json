@@ -5,14 +5,17 @@
         "lichess-studies-scraper"
     ],
     "scripts": {
-        "start": "yarn workspace frontend start",
-        "reset-db": "supabase db restore",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "frontend": "foy frontend",
+        "backend": "foy backend"
     },
     "devDependencies": {
+        "dotenv": "^10.0.0",
+        "foy": "^0.2.15",
         "husky": "^7.0.4",
         "lint-staged": "^12.0.3",
-        "prettier": "^2.4.1"
+        "prettier": "^2.4.1",
+        "ts-node": "^10.4.0"
     },
     "lint-staged": {
         "*.{ts,tsx,js,json,css,md}": "prettier --write"
