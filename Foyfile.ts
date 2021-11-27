@@ -1,5 +1,7 @@
-import { task, desc } from "foy";
+import { task, desc, setGlobalOptions } from "foy";
 import dotenv from "dotenv";
+
+setGlobalOptions({ loading: false });
 
 desc("Start the backend for local development");
 task("backend", async (ctx) => {
