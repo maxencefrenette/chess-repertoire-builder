@@ -1,18 +1,10 @@
-import { createClient, PostgrestResponse } from "@supabase/supabase-js";
-import { Repertoire, Position } from "./models";
+import { createClient } from "@supabase/supabase-js";
+import { Repertoire, Position, unwrap } from "@chess-buddy/database";
 
 // TODO: submit a bug report to supabase to they can fix their typings
 declare module "@supabase/supabase-js" {
   interface UserAttributes {
     email_confirm: boolean;
-  }
-}
-
-function unwrap<T>(response: { data: T | null }) {
-  if (!response.data) {
-    throw response;
-  } else {
-    return response.data;
   }
 }
 

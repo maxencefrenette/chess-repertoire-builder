@@ -6,7 +6,7 @@ import {
   useAddPositionToRepertoire,
   useRemovePositionFromRepertoire,
 } from "../../api/supabase";
-import { Position } from "database/models";
+import { Position } from "@chess-buddy/database";
 import { LichessOpeningPosition } from "../../api/lichess";
 import { Chess } from "chess.ts";
 

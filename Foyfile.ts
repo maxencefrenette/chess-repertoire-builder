@@ -18,7 +18,6 @@ task("backend", async (ctx) => {
     gitignore = gitignore.replace("**/supabase/.globals.sql\n", "");
     gitignore = gitignore.replace(/\n*$/, "\n");
 
-    console.log(gitignore);
     await ctx.fs.writeFile(".gitignore", gitignore);
   } else {
     ctx.log("supabase init skipped");
@@ -38,14 +37,20 @@ task("backend", async (ctx) => {
   const supabaseStartProcess = ctx.exec("supabase start");
 
   // Setup database
+  ctx.info("Creating database schema");
   await ctx.sleep(1500);
-  await ctx.exec(`psql -d '${process.env.DB_URL}' -f database/schema.sql`, {
-    stdio: "ignore",
-  });
+  await ctx.exec(
+    `psql -d '${process.env.DB_URL}' -f database-infra/schema.sql`,
+    {
+      stdio: "ignore",
+    }
+  );
+
+  ctx.info("Seeding database");
   await ctx
     .env("SUPABASE_URL", process.env.SUPABASE_URL)
     .env("SUPABASE_SERVICE_ROLE_KEY", process.env.SUPABASE_SERVICE_ROLE_KEY)
-    .exec("yarn workspace database seed");
+    .exec("yarn workspace @chess-buddy/database-infra seed");
 
   await supabaseStartProcess;
 });
@@ -57,7 +62,7 @@ task("frontend", async (ctx) => {
   await ctx
     .env("REACT_APP_SUPABASE_URL", process.env.SUPABASE_URL)
     .env("REACT_APP_SUPABASE_ANON_KEY", process.env.SUPABASE_ANON_KEY)
-    .exec("yarn workspace frontend react-scripts start");
+    .exec("yarn workspace @chess-buddy/frontend start");
 });
 
 // TODO: add task to start the lichess study scraper

@@ -2,7 +2,7 @@ import { Chess } from "chess.ts";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSupabase } from ".";
 import { games, LichessOpeningPosition } from "../lichess";
-import { Position, Move } from "database/models";
+import { Position, Move, unwrap } from "@chess-buddy/database";
 
 export const POSITION_QUERY = "position";
 export function useRepertoirePosition(
@@ -30,6 +30,10 @@ export function useRepertoirePosition(
   );
 }
 
+export interface MoveWithChilePosition extends Move {
+  child_position: Position;
+}
+
 const POSITION_MOVES_QUERY = "moves";
 export function useRepertoirePositionMoves(
   repertoire_id: string | undefined,
@@ -37,11 +41,16 @@ export function useRepertoirePositionMoves(
 ) {
   const supabase = useSupabase();
   return useQuery(
-    [POSITION_MOVES_QUERY, fen],
+    [POSITION_MOVES_QUERY, repertoire_id, fen],
     async () => {
       const { data, error } = await supabase
-        .from<Move>("moves")
-        .select()
+        .from<MoveWithChilePosition>("moves")
+        .select(
+          `
+          *,
+          child_position: move_child_position_fkey(*)
+        `
+        )
         .eq("repertoire_id", repertoire_id!)
         .eq("parent_fen", fen);
 
@@ -94,16 +103,17 @@ export function useAddPositionToRepertoire() {
       const childFrequency = repertoirePosition.frequency * moveFrequency;
 
       // TODO: move this to a stored procedure to make it faster and transactional
-      const { data: position } = await supabase
+      const childPosition: Position = await supabase
         .from<Position>("positions")
         .insert({
           repertoire_id: repertoirePosition.repertoire_id,
           fen: newFen,
           frequency: childFrequency,
         })
-        .single();
+        .single()
+        .then(unwrap);
 
-      const { data: move } = await supabase
+      const move = await supabase
         .from<Move>("moves")
         .insert({
           repertoire_id: repertoirePosition.repertoire_id,
@@ -112,16 +122,26 @@ export function useAddPositionToRepertoire() {
           move: moveSan,
           move_frequency: moveFrequency,
         })
-        .single();
+        .single()
+        .then(unwrap);
 
-      return { position, move };
+      return { move, childPosition };
     },
     {
-      onSuccess: async (result, variables) => {
+      onSuccess: (result, variables) => {
         queryClient.setQueryData<Move[]>(
-          [POSITION_MOVES_QUERY, variables.repertoirePosition.fen],
+          [
+            POSITION_MOVES_QUERY,
+            variables.repertoirePosition.repertoire_id,
+            variables.repertoirePosition.fen,
+          ],
           (old) => {
-            return [...old!, result.move!];
+            const moveWithChildPosition = {
+              ...result.move,
+              child_position: result.childPosition,
+            };
+
+            return [...old!, moveWithChildPosition];
           }
         );
       },

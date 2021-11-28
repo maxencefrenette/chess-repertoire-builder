@@ -11,7 +11,7 @@ import { observer } from "mobx-react-lite";
 import { useQuery } from "react-query";
 import { useSupabase } from "../../api/supabase";
 import { useStore } from "../../store";
-import { Repertoire } from "database/models";
+import { Repertoire } from "@chess-buddy/database";
 
 export const RepertoireSelect = observer(() => {
   const store = useStore();

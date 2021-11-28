@@ -85,8 +85,14 @@ export const Sidebar: React.FC = observer(() => {
       headerName: "Games",
     },
     {
-      field: "frequency",
-      headerName: "Frequency",
+      field: "move_frequency",
+      headerName: "Move Frequency",
+      width: 120,
+      valueFormatter: formatFrequency,
+    },
+    {
+      field: "position_frequency",
+      headerName: "Position Frequency",
       width: 120,
       valueFormatter: formatFrequency,
       hide: !repertoireSelected,
@@ -109,11 +115,14 @@ export const Sidebar: React.FC = observer(() => {
         id: moveSan,
         score: lichessMove && score(lichessMove),
         games: lichessMove && games(lichessMove),
-        frequency: repertoireMove && repertoireMove.move_frequency,
+        move_frequency: lichessMove
+          ? games(lichessMove) / games(lichessOpeningStats)
+          : 0,
+        position_frequency: repertoireMove?.child_position.frequency,
         isInRepertoire: !!repertoireMove,
       };
     })
-    .filter((row) => row.games || row.frequency);
+    .filter((row) => row.games || row.position_frequency);
 
   return (
     <Paper>

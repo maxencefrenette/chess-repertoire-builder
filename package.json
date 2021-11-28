@@ -2,6 +2,7 @@
     "private": true,
     "workspaces": [
         "database",
+        "database-infra",
         "frontend",
         "lichess-studies-scraper"
     ],
