@@ -87,12 +87,16 @@ export const Sidebar: React.FC = observer(() => {
     {
       field: "move_frequency",
       headerName: "Move Frequency",
+      description:
+        "The frequency of this move, given that this position has been reached.",
       width: 120,
       valueFormatter: formatFrequency,
     },
     {
       field: "position_frequency",
       headerName: "Position Frequency",
+      description:
+        "The overall frequency of the resulting position (including transpositions), given the currently selected repertoire.",
       width: 120,
       valueFormatter: formatFrequency,
       hide: !repertoireSelected,
