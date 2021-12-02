@@ -1,4 +1,4 @@
-import { Box, Divider, Paper } from "@mui/material";
+import { Box, Divider, Paper, styled } from "@mui/material";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
@@ -17,6 +17,12 @@ import {
 } from "@mui/x-data-grid";
 import "./Sidebar.css";
 import { AddRemovePositionButton } from "./AddRemovePositionButton";
+
+const StyledDataGrid = styled(DataGrid)`
+  .MuiDataGrid-cell:focus {
+    outline: none;
+  }
+`;
 
 export const Sidebar: React.FC = observer(() => {
   const store = useStore();
@@ -138,7 +144,7 @@ export const Sidebar: React.FC = observer(() => {
         <MovesBreadcrumbs />
       </Box>
       <Divider />
-      <DataGrid
+      <StyledDataGrid
         rows={rows}
         columns={columns}
         autoHeight={true}
