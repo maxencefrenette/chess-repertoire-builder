@@ -44,7 +44,7 @@ export function useLichessOpeningPosition(
   );
 }
 
-export function score(move: LichessOpeningMove) {
+export function score(move: LichessOpeningPosition | LichessOpeningMove) {
   return (move.white + move.draws / 2) / games(move);
 }
 

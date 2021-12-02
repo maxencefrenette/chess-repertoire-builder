@@ -167,20 +167,37 @@ export const Sidebar: React.FC = observer(() => {
           },
         }}
       />
+      <Box sx={{ height: "52px", padding: "0 10px", lineHeight: "51px" }}>
+        Score: {formatPercentRaw(score(lichessOpeningStats))}
+        <Box sx={{ display: "inline-block", width: "30px" }} />
+        Games: {games(lichessOpeningStats)}
+        {repertoirePosition && (
+          <>
+            <Box sx={{ display: "inline-block", width: "30px" }} />
+            Frequency: {formatRawFrequency(repertoirePosition.frequency)}
+          </>
+        )}
+      </Box>
     </Paper>
   );
 });
 
-function formatPercent(params: GridValueFormatterParams) {
-  return params.value?.toLocaleString(undefined, {
+function formatPercentRaw(value: number) {
+  return value.toLocaleString(undefined, {
     style: "percent",
     minimumFractionDigits: 2,
   });
 }
 
-function formatFrequency(params: GridValueFormatterParams) {
-  const value = params.value;
+function formatPercent(params: GridValueFormatterParams) {
+  if (params.value === undefined) {
+    return "";
+  }
 
+  return formatPercentRaw(params.value as number);
+}
+
+function formatRawFrequency(value: number) {
   if (typeof value !== "number" || value <= 0) {
     return;
   } else if (value > 0.5) {
@@ -191,4 +208,12 @@ function formatFrequency(params: GridValueFormatterParams) {
   } else {
     return `1 in ${Math.round(1 / value)}`;
   }
+}
+
+function formatFrequency(params: GridValueFormatterParams) {
+  if (params.value === undefined) {
+    return "";
+  }
+
+  return formatRawFrequency(params.value as number);
 }
