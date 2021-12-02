@@ -34,6 +34,9 @@ task("backend", async (ctx) => {
     await ctx.exec(`docker rm ${containers}`, { stdio: "ignore" });
   }
 
+  // Reset database
+  await ctx.fs.rmrf("supabase/.branches");
+
   const supabaseStartProcess = ctx.exec("supabase start");
 
   // Setup database
