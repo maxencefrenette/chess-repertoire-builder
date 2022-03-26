@@ -162,4 +162,8 @@ $RECYCLE.BIN/
 
 .husky
 !/frontend/.env
-/supabase/
+
+# Supabase
+**/supabase/.branches
+**/supabase/.temp
+**/supabase/.env

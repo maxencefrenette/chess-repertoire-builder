@@ -2,14 +2,16 @@
     "private": true,
     "workspaces": [
         "database",
-        "database-infra",
+        "database-seed",
         "frontend",
         "lichess-studies-scraper"
     ],
     "scripts": {
         "prepare": "husky install",
         "frontend": "foy frontend",
-        "backend": "foy backend"
+        "backend": "supabase start",
+        "db:seed": "yarn workspace @chess-buddy/database-infra seed",
+        "db:reset": "supabase db reset && yarn db:seed"
     },
     "devDependencies": {
         "dotenv": "^10.0.0",

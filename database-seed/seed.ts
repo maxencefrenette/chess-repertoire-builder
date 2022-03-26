@@ -1,5 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { Repertoire, Position, unwrap } from "@chess-buddy/database";
+import dotenv from "dotenv";
+
+dotenv.config({ path: "../.env.dev" });
 
 // TODO: submit a bug report to supabase to they can fix their typings
 declare module "@supabase/supabase-js" {
