@@ -18,10 +18,11 @@
         "foy": "^0.2.15",
         "husky": "^7.0.4",
         "lint-staged": "^12.0.3",
-        "prettier": "^2.4.1",
+        "prettier": "^2.6.1",
+        "prettier-plugin-sql": "^0.4.1",
         "ts-node": "^10.4.0"
     },
     "lint-staged": {
-        "*.{ts,tsx,js,json,css,md}": "prettier --write"
+        "*.{ts,tsx,js,json,css,md,sql}": "prettier --write"
     }
 }

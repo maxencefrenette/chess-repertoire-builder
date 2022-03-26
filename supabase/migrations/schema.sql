@@ -79,8 +79,10 @@ alter table
 add
   constraint "repertoires_user_id_fkey" FOREIGN KEY (user_id) REFERENCES auth.users(id);
 
-alter table public.moves
-add constraint move_child_position_fkey foreign key (repertoire_id, child_fen) references public.positions(repertoire_id, fen);
+alter table
+  public.moves
+add
+  constraint move_child_position_fkey foreign key (repertoire_id, child_fen) references public.positions(repertoire_id, fen);
 
 create policy "Enable all access for users based on user_id" on "public"."moves" as permissive for all to public using (
   (
