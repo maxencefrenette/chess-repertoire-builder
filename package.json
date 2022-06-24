@@ -10,7 +10,7 @@
         "prepare": "husky install",
         "frontend": "foy frontend",
         "backend": "supabase start",
-        "db:seed": "yarn workspace @chess-buddy/database-infra seed",
+        "db:seed": "yarn workspace @chess-buddy/database-seed seed",
         "db:reset": "supabase db reset && yarn db:seed"
     },
     "devDependencies": {
