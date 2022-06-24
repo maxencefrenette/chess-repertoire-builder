@@ -4,7 +4,7 @@
     "private": true,
     "license": "AGPL-3.0-or-later",
     "dependencies": {
-        "@supabase/supabase-js": "^1.27.0",
+        "@supabase/supabase-js": "1.35.3",
         "dotenv": "^10.0.0",
         "puppeteer": "^11.0.0"
     },

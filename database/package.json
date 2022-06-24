@@ -9,7 +9,7 @@
         "seed": "node --loader ts-node/esm --experimental-specifier-resolution=node scripts/seed.ts"
     },
     "dependencies": {
-        "@supabase/supabase-js": "^1.28.2"
+        "@supabase/supabase-js": "^1.35.3"
     },
     "devDependencies": {
         "@types/node": "^16.11.7",

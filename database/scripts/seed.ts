@@ -5,13 +5,6 @@ import retry from "p-retry";
 
 dotenv.config({ path: "../.env.dev" });
 
-// TODO: submit a bug report to supabase to they can fix their typings
-declare module "@supabase/supabase-js" {
-  interface UserAttributes {
-    email_confirm: boolean;
-  }
-}
-
 const supabase = createClient(
   process.env.SUPABASE_URL as string,
   process.env.SUPABASE_SERVICE_ROLE_KEY as string
