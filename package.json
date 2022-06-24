@@ -8,19 +8,16 @@
     ],
     "scripts": {
         "prepare": "husky install",
-        "frontend": "foy frontend",
+        "frontend": "yarn workspace @chess-buddy/frontend start",
         "backend": "supabase start",
         "db:seed": "yarn workspace @chess-buddy/database seed",
         "db:reset": "supabase db reset && yarn db:seed"
     },
     "devDependencies": {
-        "dotenv": "^10.0.0",
-        "foy": "^0.2.15",
         "husky": "^7.0.4",
         "lint-staged": "^12.0.3",
         "prettier": "^2.6.1",
-        "prettier-plugin-sql": "^0.4.1",
-        "ts-node": "^10.4.0"
+        "prettier-plugin-sql": "^0.4.1"
     },
     "lint-staged": {
         "*.{ts,tsx,js,json,css,md,sql}": "prettier --write"
