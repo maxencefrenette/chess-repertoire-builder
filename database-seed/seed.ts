@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { Repertoire, Position, unwrap } from "@chess-buddy/database";
 import dotenv from "dotenv";
+import retry from "p-retry";
 
 dotenv.config({ path: "../.env.dev" });
 
@@ -16,13 +17,15 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY as string
 );
 
-const user = await supabase.auth.api
-  .createUser({
-    email: "user@example.com",
-    password: "QPP%&5b2CV&*Vxds",
-    email_confirm: true,
-  })
-  .then(unwrap);
+const user = await retry(() =>
+  supabase.auth.api
+    .createUser({
+      email: "user@example.com",
+      password: "QPP%&5b2CV&*Vxds",
+      email_confirm: true,
+    })
+    .then(unwrap)
+);
 
 const repertoire = await supabase
   .from<Repertoire>("repertoires")
