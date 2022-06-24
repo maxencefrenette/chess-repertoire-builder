@@ -1,8 +1,0 @@
-{
-  "extends": "ts-node/node16/tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "module": "esnext",
-    "moduleResolution": "node"
-  }
-}
