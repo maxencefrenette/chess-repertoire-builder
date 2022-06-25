@@ -119,7 +119,7 @@ export function useAddPositionToRepertoire() {
           repertoire_id: repertoirePosition.repertoire_id,
           parent_fen: currentFen,
           child_fen: newFen,
-          move: moveSan,
+          san: moveSan,
           move_frequency: moveFrequency,
         })
         .single()
@@ -157,7 +157,6 @@ export interface RemovePositionFromRepertoireArguments {
 
 export function useRemovePositionFromRepertoire() {
   const supabase = useSupabase();
-  const queryClient = useQueryClient();
 
   return useMutation(
     "RemovePositionFromRepertoire",

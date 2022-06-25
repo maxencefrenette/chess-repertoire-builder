@@ -14,15 +14,14 @@ alter table
 
 create table
   public.moves (
+    repertoire_id uuid not null,
     parent_fen character varying not null,
     child_fen character varying not null,
+    san character varying not null,
     move_frequency double precision not null,
     created_at timestamp
     with
-      time zone not null default now(),
-    move
-      character varying not null,
-      repertoire_id uuid not null
+      time zone not null default now()
   );
 
 alter table

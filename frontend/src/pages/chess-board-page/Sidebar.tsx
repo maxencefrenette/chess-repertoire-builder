@@ -118,7 +118,7 @@ export const Sidebar: React.FC = observer(() => {
       );
 
       const repertoireMove = repertoirePositionMoves?.find(
-        (m) => m.move === moveSan
+        (m) => m.san === moveSan
       );
 
       return {
