@@ -1,0 +1,11 @@
+{
+  "overrides": [
+    {
+      "files": "*.sql",
+      "options": {
+        "parser": "sql",
+        "language": "postgresql"
+      }
+    }
+  ]
+}

@@ -1,42 +1,57 @@
-create table public.lichess_studies (
-  id character varying not null,
-  last_refreshed timestamp with time zone,
-  created_at timestamp with time zone default now()
-);
+create table
+  public.lichess_studies (
+    id character varying not null,
+    last_refreshed timestamp
+    with
+      time zone,
+      created_at timestamp
+    with
+      time zone default now()
+  );
 
 alter table
   public.lichess_studies enable row level security;
 
-create table public.moves (
-  parent_fen character varying not null,
-  child_fen character varying not null,
-  move_frequency double precision not null,
-  created_at timestamp with time zone not null default now(),
-  move character varying not null,
-  repertoire_id uuid not null
-);
+create table
+  public.moves (
+    parent_fen character varying not null,
+    child_fen character varying not null,
+    move_frequency double precision not null,
+    created_at timestamp
+    with
+      time zone not null default now(),
+    move
+      character varying not null,
+      repertoire_id uuid not null
+  );
 
 alter table
   public.moves enable row level security;
 
-create table public.positions (
-  fen character varying not null,
-  repertoire_id uuid not null,
-  created_at timestamp with time zone default now(),
-  frequency double precision not null
-);
+create table
+  public.positions (
+    fen character varying not null,
+    repertoire_id uuid not null,
+    created_at timestamp
+    with
+      time zone default now(),
+      frequency double precision not null
+  );
 
 alter table
   public.positions enable row level security;
 
-create table public.repertoires (
-  name character varying not null,
-  created_at timestamp with time zone not null default now(),
-  user_id uuid not null,
-  id uuid not null default uuid_generate_v4(),
-  lichess_speeds character varying not null,
-  lichess_ratings character varying not null
-);
+create table
+  public.repertoires (
+    name character varying not null,
+    created_at timestamp
+    with
+      time zone not null default now(),
+      user_id uuid not null,
+      id uuid not null default uuid_generate_v4(),
+      lichess_speeds character varying not null,
+      lichess_ratings character varying not null
+  );
 
 alter table
   public.repertoires enable row level security;
@@ -70,44 +85,83 @@ add
   constraint "repertoires_pkey" PRIMARY KEY using index "repertoires_pkey";
 
 alter table
-  "public"."positions"
+  positions
 add
-  constraint "positions_repertoire_id_fkey" FOREIGN KEY (repertoire_id) REFERENCES repertoires(id);
+  constraint positions_repertoire_id_fkey FOREIGN KEY (repertoire_id) REFERENCES repertoires(id) on delete cascade;
 
 alter table
-  "public"."repertoires"
+  repertoires
 add
-  constraint "repertoires_user_id_fkey" FOREIGN KEY (user_id) REFERENCES auth.users(id);
+  constraint repertoires_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) on delete cascade;
 
 alter table
-  public.moves
+  moves
 add
-  constraint move_child_position_fkey foreign key (repertoire_id, child_fen) references public.positions(repertoire_id, fen);
+  constraint move_child_position_fkey foreign key (repertoire_id, child_fen) references positions(repertoire_id, fen) on delete cascade;
 
-create policy "Enable all access for users based on user_id" on "public"."moves" as permissive for all to public using (
-  (
-    auth.uid() = (
-      SELECT
-        repertoires.user_id
-      FROM
-        repertoires
-      WHERE
-        (repertoires.id = moves.repertoire_id)
+alter table
+  moves
+add
+  constraint move_parent_position_fkey foreign key (repertoire_id, parent_fen) references positions(repertoire_id, fen) on delete cascade;
+
+create policy
+  "Enable all access for users based on user_id" on "public"."moves" as permissive for all to public using (
+    (
+      auth.uid() = (
+        SELECT
+          repertoires.user_id
+        FROM
+          repertoires
+        WHERE
+          (repertoires.id = moves.repertoire_id)
+      )
     )
-  )
-);
+  );
 
-create policy "Enable all access for users based on user_id" on "public"."positions" as permissive for all to public using (
-  (
-    auth.uid() = (
-      SELECT
-        repertoires.user_id
-      FROM
-        repertoires
-      WHERE
-        (repertoires.id = positions.repertoire_id)
+create policy
+  "Enable all access for users based on user_id" on "public"."positions" as permissive for all to public using (
+    (
+      auth.uid() = (
+        SELECT
+          repertoires.user_id
+        FROM
+          repertoires
+        WHERE
+          (repertoires.id = positions.repertoire_id)
+      )
     )
-  )
-);
+  );
 
-create policy "Enable all access for users based on user_id" on "public"."repertoires" as permissive for all to public using ((auth.uid() = user_id));
+create policy
+  "Enable all access for users based on user_id" on "public"."repertoires" as permissive for all to public using ((auth.uid() = user_id));
+
+create function
+  delete_orphan_positions() returns trigger as $$ begin
+delete from
+  positions
+where
+  positions.repertoire_id = old.repertoire_id
+  and positions.fen = old.child_fen
+  and not exists (
+    select
+      *
+    from
+      moves
+    where
+      moves.repertoire_id = old.repertoire_id
+      and moves.child_fen = old.child_fen
+  );
+
+return null;
+
+end;
+
+$$ language plpgsql;
+
+create trigger
+  example_trigger
+after
+delete
+  on moves for each row
+execute
+  procedure delete_orphan_positions();
