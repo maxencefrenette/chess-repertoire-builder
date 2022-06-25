@@ -5,7 +5,6 @@ import React from "react";
 import { useLichessOpeningPosition, score, games } from "../../api/lichess";
 import { useStore } from "../../store";
 import { MovesBreadcrumbs } from "./MovesBreadcrumbs";
-import { RepertoireSelect } from "./RepertoireSelect";
 import {
   useRepertoirePosition,
   useRepertoirePositionMoves,
@@ -17,6 +16,7 @@ import {
 } from "@mui/x-data-grid";
 import "./Sidebar.css";
 import { AddRemovePositionButton } from "./AddRemovePositionButton";
+import { Repertoire } from "@chess-buddy/database";
 
 const StyledDataGrid = styled(DataGrid)`
   .MuiDataGrid-cell:focus {
@@ -24,16 +24,20 @@ const StyledDataGrid = styled(DataGrid)`
   }
 `;
 
-export const Sidebar: React.FC = observer(() => {
+export interface SidebarProps {
+  repertoire?: Repertoire;
+}
+
+export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
   const store = useStore();
 
   const fen = store.ui.position.fen();
-  const repertoireId = store.ui.repertoire?.id;
+  const repertoireId = repertoire?.id;
 
   const { data: lichessOpeningStats } = useLichessOpeningPosition(
     fen,
-    store.ui.repertoire?.lichess_speeds,
-    store.ui.repertoire?.lichess_ratings
+    repertoire?.lichess_speeds,
+    repertoire?.lichess_ratings
   );
   const { data: repertoirePosition } = useRepertoirePosition(repertoireId, fen);
   const { data: repertoirePositionMoves } = useRepertoirePositionMoves(
@@ -50,7 +54,7 @@ export const Sidebar: React.FC = observer(() => {
     return <div>Loading...</div>;
   }
 
-  const repertoireSelected = store.ui.repertoire !== undefined;
+  const repertoireSelected = repertoire !== undefined;
   const currentPositionIsInRepertoire = repertoirePosition !== null;
 
   const columns: GridColDef[] = [
@@ -137,10 +141,7 @@ export const Sidebar: React.FC = observer(() => {
   return (
     <Paper>
       <Box sx={{ padding: "16px" }}>
-        <RepertoireSelect />
-      </Box>
-      <Divider />
-      <Box sx={{ padding: "16px" }}>
+        {repertoire?.name}
         <MovesBreadcrumbs />
       </Box>
       <Divider />

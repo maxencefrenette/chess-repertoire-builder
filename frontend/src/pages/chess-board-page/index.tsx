@@ -1,18 +1,47 @@
-import { Box } from '@mui/system';
-import { RouteComponentProps } from '@reach/router';
-import React from 'react';
-import { ChessBoard } from './ChessBoard';
-import { Sidebar } from './Sidebar';
+import { Repertoire } from "@chess-buddy/database";
+import { Box } from "@mui/system";
+import { RouteComponentProps } from "@reach/router";
+import React from "react";
+import { useQuery } from "react-query";
+import { useSupabase } from "src/api/supabase";
+import { ChessBoard } from "./ChessBoard";
+import { Sidebar } from "./Sidebar";
 
-export const ChessBoardPage: React.FC<RouteComponentProps> = () => {
-    return (
-        <Box sx={{ display: 'flex', padding: '10px' }}>
-            <Box sx={{ width: '1000px', margin: '10px' }}>
-                <ChessBoard />
-            </Box>
-            <Box sx={{ flex: '1 0 200px', margin: '10px' }}>
-                <Sidebar />
-            </Box>
-        </Box>
-    );
+interface ChessBoardPageProps extends RouteComponentProps {
+  repertoireId?: string;
+}
+
+export const ChessBoardPage: React.FC<ChessBoardPageProps> = ({
+  repertoireId,
+}) => {
+  console.log(repertoireId);
+  const supabase = useSupabase();
+
+  const { data: repertoire } = useQuery("repertoire", async () => {
+    const { data, error } = await supabase
+      .from<Repertoire>("repertoires")
+      .select()
+      .eq("id", repertoireId || "")
+      .single();
+
+    if (error !== null) {
+      throw error;
+    }
+
+    return data!;
+  });
+
+  // Display nothing while loading
+  if (repertoireId && !repertoire) return null;
+
+  return (
+    <Box sx={{ display: "flex", padding: "10px" }}>
+      <Box sx={{ width: "1000px", margin: "10px" }}>
+        <ChessBoard />
+      </Box>
+      <Box sx={{ flex: "1 0 200px", margin: "10px" }}>
+        <Sidebar repertoire={repertoire} />
+      </Box>
+    </Box>
+  );
 };
