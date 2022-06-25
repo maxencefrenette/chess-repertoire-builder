@@ -30,7 +30,7 @@ export function useRepertoirePosition(
   );
 }
 
-export interface MoveWithChilePosition extends Move {
+export interface MoveWithChildPosition extends Move {
   child_position: Position;
 }
 
@@ -44,7 +44,7 @@ export function useRepertoirePositionMoves(
     [POSITION_MOVES_QUERY, repertoire_id, fen],
     async () => {
       const { data, error } = await supabase
-        .from<MoveWithChilePosition>("moves")
+        .from<MoveWithChildPosition>("moves")
         .select(
           `
           *,
@@ -149,16 +149,35 @@ export function useAddPositionToRepertoire() {
   );
 }
 
+export interface RemovePositionFromRepertoireArguments {
+  repertoire_id: string;
+  parent_fen: string;
+  child_fen: string;
+}
+
 export function useRemovePositionFromRepertoire() {
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
 
-  return async (repertoire_id: string, fen: string) => {
-    // TODO: Recursively delete all unreachable positions
-    // TODO: Update frequency in child positions that are still reachable
-    // TODO: Move this to a stored procedure to make it faster and transactional
-    return await supabase
-      .from<Move>("moves")
-      .delete()
-      .match({ repertoire_id, parent_fen: fen });
-  };
+  return useMutation(
+    "RemovePositionFromRepertoire",
+    async ({
+      repertoire_id,
+      parent_fen,
+      child_fen,
+    }: RemovePositionFromRepertoireArguments) => {
+      // TODO: Recursively delete all unreachable positions
+      // TODO: Update frequency in child positions that are still reachable
+      // TODO: Move this to a stored procedure to make it faster and transactional
+      return await supabase
+        .from<Move>("moves")
+        .delete()
+        .match({ repertoire_id, parent_fen, child_fen });
+    },
+    {
+      onSuccess: (result, variables) => {
+        // TODO
+      },
+    }
+  );
 }

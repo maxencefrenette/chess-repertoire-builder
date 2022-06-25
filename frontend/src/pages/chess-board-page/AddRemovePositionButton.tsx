@@ -18,60 +18,65 @@ export interface AddRemovePositionButtonProps {
   moveIsInRepertoire: boolean;
 }
 
-export const AddRemovePositionButton: React.FC<AddRemovePositionButtonProps> =
-  ({
-    moveSan,
-    repertoirePosition,
-    lichessOpeningPosition,
-    currentPositionIsInRepertoire,
-    moveIsInRepertoire,
-  }) => {
-    const addPositionToRepertoire = useAddPositionToRepertoire();
-    const removePositionFromRepertoire = useRemovePositionFromRepertoire();
+export const AddRemovePositionButton: React.FC<
+  AddRemovePositionButtonProps
+> = ({
+  moveSan,
+  repertoirePosition,
+  lichessOpeningPosition,
+  currentPositionIsInRepertoire,
+  moveIsInRepertoire,
+}) => {
+  const addPositionToRepertoire = useAddPositionToRepertoire();
+  const removePositionFromRepertoire = useRemovePositionFromRepertoire();
 
-    const handleAddToRepertoire = (event: React.MouseEvent) => {
-      event.stopPropagation();
+  const handleAddToRepertoire = (event: React.MouseEvent) => {
+    event.stopPropagation();
 
-      addPositionToRepertoire.mutate({
-        repertoirePosition,
-        lichessOpeningPosition,
-        moveSan,
-      });
-    };
-
-    const handleRemoveFromRepertoire = (event: React.MouseEvent) => {
-      event.stopPropagation();
-
-      const position = new Chess(repertoirePosition.fen);
-      position.move(moveSan);
-      const childFen = position.fen();
-
-      removePositionFromRepertoire(repertoirePosition.repertoire_id, childFen);
-    };
-
-    if (addPositionToRepertoire.isLoading) {
-      return <CircularProgress size={24} />;
-    } else if (!moveIsInRepertoire) {
-      return (
-        <Tooltip title="Add to repertoire">
-          <span>
-            <IconButton
-              color="primary"
-              disabled={!currentPositionIsInRepertoire}
-              onClick={handleAddToRepertoire}
-            >
-              <AddIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-      );
-    } else {
-      return (
-        <Tooltip title="Remove from repertoire">
-          <IconButton color="error" onClick={handleRemoveFromRepertoire}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      );
-    }
+    addPositionToRepertoire.mutate({
+      repertoirePosition,
+      lichessOpeningPosition,
+      moveSan,
+    });
   };
+
+  const handleRemoveFromRepertoire = (event: React.MouseEvent) => {
+    event.stopPropagation();
+
+    const position = new Chess(repertoirePosition.fen);
+    position.move(moveSan);
+    const childFen = position.fen();
+
+    removePositionFromRepertoire.mutate({
+      repertoire_id: repertoirePosition.repertoire_id,
+      parent_fen: repertoirePosition.fen,
+      child_fen: childFen,
+    });
+  };
+
+  if (addPositionToRepertoire.isLoading) {
+    return <CircularProgress size={24} />;
+  } else if (!moveIsInRepertoire) {
+    return (
+      <Tooltip title="Add to repertoire">
+        <span>
+          <IconButton
+            color="primary"
+            disabled={!currentPositionIsInRepertoire}
+            onClick={handleAddToRepertoire}
+          >
+            <AddIcon />
+          </IconButton>
+        </span>
+      </Tooltip>
+    );
+  } else {
+    return (
+      <Tooltip title="Remove from repertoire">
+        <IconButton color="error" onClick={handleRemoveFromRepertoire}>
+          <DeleteIcon />
+        </IconButton>
+      </Tooltip>
+    );
+  }
+};
