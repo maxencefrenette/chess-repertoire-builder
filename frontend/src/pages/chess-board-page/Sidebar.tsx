@@ -1,4 +1,4 @@
-import { Box, Divider, Paper, styled } from "@mui/material";
+import { Box, Paper, styled } from "@mui/material";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
@@ -144,7 +144,6 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
         {repertoire?.name}
         <MovesBreadcrumbs />
       </Box>
-      <Divider />
       <StyledDataGrid
         rows={rows}
         columns={columns}

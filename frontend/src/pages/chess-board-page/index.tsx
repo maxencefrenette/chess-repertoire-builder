@@ -1,5 +1,5 @@
 import { Repertoire } from "@chess-buddy/database";
-import { Box } from "@mui/system";
+import { Stack, Box } from "@mui/material";
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { useQuery } from "react-query";
@@ -39,10 +39,10 @@ export const ChessBoardPage: React.FC<ChessBoardPageProps> = ({
       <Box sx={{ width: "1000px", margin: "10px" }}>
         <ChessBoard />
       </Box>
-      <Box sx={{ flex: "1 0 200px", margin: "10px" }}>
+      <Stack sx={{ flex: "1 0 200px", margin: "10px" }}>
         <Sidebar repertoire={repertoire} />
         {repertoire && <HolesInRepertoire repertoire={repertoire} />}
-      </Box>
+      </Stack>
     </Box>
   );
 };
