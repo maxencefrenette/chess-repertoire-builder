@@ -77,3 +77,25 @@ create function
 end;
 
 $$ language plpgsql;
+
+-- Add a move to a repertoire
+-- If the resulting position already exists, combine the frequencies
+create function
+  add_move_to_repertoire(
+    repertoire_id uuid,
+    parent_fen character varying,
+    child_fen character varying,
+    move_san character varying,
+    move_frequency double precision,
+    position_turn color,
+    position_frequency double precision
+  ) returns void as $$ begin
+
+  insert into positions values (child_fen, add_move_to_repertoire.repertoire_id, position_turn, position_frequency)
+  on conflict on constraint positions_pkey do update set frequency = positions.frequency + excluded.frequency;
+
+  insert into moves values (add_move_to_repertoire.repertoire_id, parent_fen, child_fen, move_san, move_frequency);
+
+end;
+
+$$ language plpgsql;

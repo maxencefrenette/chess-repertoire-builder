@@ -2,7 +2,7 @@ import { Chess } from "chess.ts";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSupabase } from ".";
 import { games, LichessOpeningPosition } from "../lichess";
-import { Position, Move, unwrap } from "@chess-buddy/database";
+import { Position, Move } from "@chess-buddy/database";
 
 export const POSITION_QUERY = "position";
 export function useRepertoirePosition(
@@ -75,7 +75,7 @@ export function useAddPositionToRepertoire() {
   const queryClient = useQueryClient();
 
   return useMutation(
-    "useAddPositionToRepertoire",
+    "useAddMoveToRepertoire",
     async ({
       repertoirePosition,
       lichessOpeningPosition,
@@ -99,52 +99,28 @@ export function useAddPositionToRepertoire() {
         moveFrequency = gamesAfterMove / totalGames;
       }
 
-      // TODO: account for transpositions
       const childFrequency = repertoirePosition.frequency * moveFrequency;
 
-      // TODO: move this to a stored procedure to make it faster and transactional
-      const childPosition: Position = await supabase
-        .from<Position>("positions")
-        .insert({
-          repertoire_id: repertoirePosition.repertoire_id,
-          fen: newFen,
-          turn: newPosition.turn(),
-          frequency: childFrequency,
-        })
-        .single()
-        .then(unwrap);
-
-      const move = await supabase
-        .from<Move>("moves")
-        .insert({
-          repertoire_id: repertoirePosition.repertoire_id,
-          parent_fen: currentFen,
-          child_fen: newFen,
-          san: moveSan,
-          move_frequency: moveFrequency,
-        })
-        .single()
-        .then(unwrap);
-
-      return { move, childPosition };
+      await supabase.rpc("add_move_to_repertoire", {
+        repertoire_id: repertoirePosition.repertoire_id,
+        parent_fen: currentFen,
+        child_fen: newFen,
+        move_san: moveSan,
+        move_frequency: moveFrequency,
+        position_turn: newPosition.turn(),
+        position_frequency: childFrequency,
+      });
     },
     {
-      onSuccess: (result, variables) => {
-        queryClient.setQueryData<Move[]>(
-          [
-            POSITION_MOVES_QUERY,
-            variables.repertoirePosition.repertoire_id,
-            variables.repertoirePosition.fen,
-          ],
-          (old) => {
-            const moveWithChildPosition = {
-              ...result.move,
-              child_position: result.childPosition,
-            };
+      onSuccess: (_, variables) => {
+        queryClient.invalidateQueries([
+          POSITION_MOVES_QUERY,
+          variables.repertoirePosition.repertoire_id,
+          variables.repertoirePosition.fen,
+        ]);
 
-            return [...old!, moveWithChildPosition];
-          }
-        );
+        queryClient.invalidateQueries("holes_in_repertoire_type_1");
+        queryClient.invalidateQueries("holes_in_repertoire_type_2");
       },
     }
   );
