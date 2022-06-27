@@ -3,8 +3,8 @@ import { CircularProgress, IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  useAddPositionToRepertoire,
-  useRemovePositionFromRepertoire,
+  useAddMoveToRepertoire,
+  useDeleteMoveFromRepertoire,
 } from "../../api/supabase";
 import { Position } from "@chess-buddy/database";
 import { LichessOpeningPosition } from "../../api/lichess";
@@ -27,8 +27,8 @@ export const AddRemovePositionButton: React.FC<
   currentPositionIsInRepertoire,
   moveIsInRepertoire,
 }) => {
-  const addPositionToRepertoire = useAddPositionToRepertoire();
-  const removePositionFromRepertoire = useRemovePositionFromRepertoire();
+  const addPositionToRepertoire = useAddMoveToRepertoire();
+  const removePositionFromRepertoire = useDeleteMoveFromRepertoire();
 
   const handleAddToRepertoire = (event: React.MouseEvent) => {
     event.stopPropagation();
