@@ -2,7 +2,7 @@ import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Link as RouterLink } from "@reach/router";
 import { UserAuthActions } from "./UserAuthActions";
-import { useStore } from "src/store";
+import { useStore } from "store";
 import { observer } from "mobx-react-lite";
 
 export const TopBar = observer(() => {

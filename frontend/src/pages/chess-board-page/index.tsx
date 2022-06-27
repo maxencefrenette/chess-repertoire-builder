@@ -3,7 +3,7 @@ import { Stack, Box } from "@mui/material";
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { useQuery } from "react-query";
-import { useSupabase } from "src/api/supabase";
+import { useSupabase } from "api/supabase";
 import { ChessBoard } from "./ChessBoard";
 import { HolesInRepertoire } from "./HolesInRepertoire";
 import { Sidebar } from "./Sidebar";

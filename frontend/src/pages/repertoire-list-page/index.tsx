@@ -3,7 +3,7 @@ import { Button, Paper, Stack } from "@mui/material";
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { useQuery } from "react-query";
-import { useSupabase } from "src/api/supabase";
+import { useSupabase } from "api/supabase";
 import { Link } from "@reach/router";
 
 export const RepertoireListPage: React.FC<RouteComponentProps> = () => {

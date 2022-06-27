@@ -3,7 +3,7 @@ import React from "react";
 import { useStore } from "../../store";
 import "./Sidebar.css";
 import { Position, Repertoire } from "@chess-buddy/database";
-import { useSupabase } from "src/api/supabase";
+import { useSupabase } from "api/supabase";
 import { useQuery } from "react-query";
 
 export interface HolesInRepertoireProps {

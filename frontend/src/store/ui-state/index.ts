@@ -1,6 +1,6 @@
 import { Chess } from "chess.ts";
 import { action, makeObservable, observable } from "mobx";
-import { Square } from "../../helpers/chess";
+import { Square } from "../../shared/chess";
 
 export class UiState {
   isLoggedIn: boolean | undefined = undefined;
