@@ -41,4 +41,8 @@ export class UiState {
 
     this.position = newPosition;
   }
+
+  setPosition(fen: string) {
+    this.position = new Chess(fen);
+  }
 }

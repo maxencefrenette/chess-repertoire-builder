@@ -139,7 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
     .filter((row) => row.games || row.position_frequency);
 
   return (
-    <Paper>
+    <Paper sx={{ marginBottom: "16px" }}>
       <Box sx={{ padding: "16px" }}>
         {repertoire?.name}
         <MovesBreadcrumbs />

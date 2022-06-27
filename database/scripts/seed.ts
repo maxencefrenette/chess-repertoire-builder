@@ -34,5 +34,6 @@ const repertoire = await supabase
 await supabase.from<Position>("positions").insert({
   repertoire_id: repertoire.id,
   fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+  turn: "w",
   frequency: 1,
 });

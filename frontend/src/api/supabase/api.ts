@@ -108,6 +108,7 @@ export function useAddPositionToRepertoire() {
         .insert({
           repertoire_id: repertoirePosition.repertoire_id,
           fen: newFen,
+          turn: newPosition.turn(),
           frequency: childFrequency,
         })
         .single()

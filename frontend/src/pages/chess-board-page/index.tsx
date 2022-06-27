@@ -5,6 +5,7 @@ import React from "react";
 import { useQuery } from "react-query";
 import { useSupabase } from "src/api/supabase";
 import { ChessBoard } from "./ChessBoard";
+import { HolesInRepertoire } from "./HolesInRepertoire";
 import { Sidebar } from "./Sidebar";
 
 interface ChessBoardPageProps extends RouteComponentProps {
@@ -14,7 +15,6 @@ interface ChessBoardPageProps extends RouteComponentProps {
 export const ChessBoardPage: React.FC<ChessBoardPageProps> = ({
   repertoireId,
 }) => {
-  console.log(repertoireId);
   const supabase = useSupabase();
 
   const { data: repertoire } = useQuery("repertoire", async () => {
@@ -41,6 +41,7 @@ export const ChessBoardPage: React.FC<ChessBoardPageProps> = ({
       </Box>
       <Box sx={{ flex: "1 0 200px", margin: "10px" }}>
         <Sidebar repertoire={repertoire} />
+        {repertoire && <HolesInRepertoire repertoire={repertoire} />}
       </Box>
     </Box>
   );
