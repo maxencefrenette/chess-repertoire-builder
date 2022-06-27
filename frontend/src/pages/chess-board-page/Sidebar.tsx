@@ -17,6 +17,7 @@ import {
 import "./Sidebar.css";
 import { AddRemovePositionButton } from "./AddRemovePositionButton";
 import { Repertoire } from "@chess-buddy/database";
+import { formatPercent, formatFrequency } from "shared/format";
 
 const StyledDataGrid = styled(DataGrid)`
   .MuiDataGrid-cell:focus {
@@ -87,7 +88,7 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
       field: "score",
       headerName: "Score",
       width: 120,
-      valueFormatter: formatPercent,
+      valueFormatter: formatPercentColumn,
     },
     {
       field: "games",
@@ -100,7 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
       description:
         "The frequency of this move, given that this position has been reached.",
       width: 120,
-      valueFormatter: formatFrequency,
+      valueFormatter: formatFrequencyColumn,
     },
     {
       field: "position_frequency",
@@ -108,7 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
       description:
         "The overall frequency of the resulting position (including transpositions), given the currently selected repertoire.",
       width: 120,
-      valueFormatter: formatFrequency,
+      valueFormatter: formatFrequencyColumn,
       hide: !repertoireSelected,
     },
   ];
@@ -174,13 +175,13 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
         }}
       />
       <Box sx={{ height: "52px", padding: "0 10px", lineHeight: "51px" }}>
-        Score: {formatPercentRaw(score(lichessOpeningStats))}
+        Score: {formatPercent(score(lichessOpeningStats))}
         <Box sx={{ display: "inline-block", width: "30px" }} />
         Games: {games(lichessOpeningStats)}
         {repertoirePosition && (
           <>
             <Box sx={{ display: "inline-block", width: "30px" }} />
-            Frequency: {formatRawFrequency(repertoirePosition.frequency)}
+            Frequency: {formatFrequency(repertoirePosition.frequency)}
           </>
         )}
       </Box>
@@ -188,38 +189,18 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
   );
 });
 
-function formatPercentRaw(value: number) {
-  return value.toLocaleString(undefined, {
-    style: "percent",
-    minimumFractionDigits: 2,
-  });
-}
-
-function formatPercent(params: GridValueFormatterParams) {
+export function formatPercentColumn(params: GridValueFormatterParams) {
   if (params.value === undefined) {
     return "";
   }
 
-  return formatPercentRaw(params.value as number);
+  return formatPercent(params.value as number);
 }
 
-function formatRawFrequency(value: number) {
-  if (typeof value !== "number" || value <= 0) {
-    return;
-  } else if (value > 0.5) {
-    return value.toLocaleString(undefined, {
-      style: "percent",
-      minimumFractionDigits: 2,
-    });
-  } else {
-    return `1 in ${Math.round(1 / value)}`;
-  }
-}
-
-function formatFrequency(params: GridValueFormatterParams) {
+function formatFrequencyColumn(params: GridValueFormatterParams) {
   if (params.value === undefined) {
     return "";
   }
 
-  return formatRawFrequency(params.value as number);
+  return formatFrequency(params.value as number);
 }
