@@ -1,7 +1,8 @@
 -- Delete the potential orphan position when a move is deleted
+-- TODO: Update frequency in child positions that are still reachable
 create function
   delete_orphan_positions() returns trigger as $$ begin
-  
+
   delete from
     positions
   where

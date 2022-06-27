@@ -134,6 +134,7 @@ export interface RemovePositionFromRepertoireArguments {
 
 export function useRemovePositionFromRepertoire() {
   const supabase = useSupabase();
+  const queryClient = useQueryClient();
 
   return useMutation(
     "RemovePositionFromRepertoire",
@@ -142,9 +143,6 @@ export function useRemovePositionFromRepertoire() {
       parent_fen,
       child_fen,
     }: RemovePositionFromRepertoireArguments) => {
-      // TODO: Recursively delete all unreachable positions
-      // TODO: Update frequency in child positions that are still reachable
-      // TODO: Move this to a stored procedure to make it faster and transactional
       return await supabase
         .from<Move>("moves")
         .delete()
@@ -152,7 +150,14 @@ export function useRemovePositionFromRepertoire() {
     },
     {
       onSuccess: (result, variables) => {
-        // TODO
+        queryClient.invalidateQueries([
+          POSITION_MOVES_QUERY,
+          variables.repertoire_id,
+          variables.parent_fen,
+        ]);
+
+        queryClient.invalidateQueries("holes_in_repertoire_type_1");
+        queryClient.invalidateQueries("holes_in_repertoire_type_2");
       },
     }
   );
