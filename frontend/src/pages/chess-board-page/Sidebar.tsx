@@ -18,6 +18,7 @@ import "./Sidebar.css";
 import { AddRemovePositionButton } from "./AddRemovePositionButton";
 import { Repertoire } from "@chess-buddy/database";
 import { formatPercent, formatFrequency } from "shared/format";
+import { PgnExportButton } from "shared/PgnExportButton";
 
 const StyledDataGrid = styled(DataGrid)`
   .MuiDataGrid-cell:focus {
@@ -143,6 +144,12 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
     <Paper sx={{ marginBottom: "16px" }}>
       <Box sx={{ padding: "16px" }}>
         {repertoire?.name}
+        {repertoire && (
+          <PgnExportButton
+            sx={{ margin: "0 8px" }}
+            repertoireId={repertoire.id}
+          />
+        )}
         <MovesBreadcrumbs />
       </Box>
       <StyledDataGrid

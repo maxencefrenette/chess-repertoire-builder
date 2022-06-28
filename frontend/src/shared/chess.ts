@@ -16,6 +16,8 @@ function allChessSquares() {
 export const squares = allChessSquares();
 export type Square = `${File}${Rank}`;
 
+export const startingPosition = new Chess().fen();
+
 export function generateLegalMovesForChessboard(
   position: Chess
 ): Map<Square, Square[]> {
