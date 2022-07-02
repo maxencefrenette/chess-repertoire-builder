@@ -13,7 +13,7 @@ function App() {
     <StoreContext.Provider value={new RootStore()}>
       <SupabaseContextProvider>
         <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools />
+          {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
           <CssBaseline />
           <Layout />
         </QueryClientProvider>
