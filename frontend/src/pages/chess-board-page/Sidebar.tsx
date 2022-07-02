@@ -1,4 +1,4 @@
-import { Box, Paper, styled } from "@mui/material";
+import { Box, Button, Paper, styled } from "@mui/material";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
@@ -19,6 +19,7 @@ import { AddRemovePositionButton } from "./AddRemovePositionButton";
 import { Repertoire } from "@chess-buddy/database";
 import { formatPercent, formatFrequency } from "shared/format";
 import { PgnExportButton } from "shared/PgnExportButton";
+import { Link } from "@reach/router";
 
 const StyledDataGrid = styled(DataGrid)`
   .MuiDataGrid-cell:focus {
@@ -152,12 +153,17 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
   return (
     <Paper sx={{ marginBottom: "16px" }}>
       <Box sx={{ padding: "16px" }}>
-        {repertoire?.name}
         {repertoire && (
-          <PgnExportButton
-            sx={{ margin: "0 8px" }}
-            repertoireId={repertoire.id}
-          />
+          <>
+            {repertoire.name}
+            <PgnExportButton
+              sx={{ margin: "0 8px" }}
+              repertoireId={repertoire.id}
+            />
+            <Button component={Link} to="./import" variant="contained">
+              Import
+            </Button>
+          </>
         )}
         <MovesBreadcrumbs />
       </Box>

@@ -18,7 +18,7 @@ export interface LichessOpeningMove {
   readonly averageRating: number;
 }
 
-export function useLichessOpeningPosition(
+export async function fetchLichessOpeningPosition(
   fen: string,
   speeds: string | undefined,
   ratings: string | undefined
@@ -31,16 +31,22 @@ export function useLichessOpeningPosition(
     ratings = "1600,1800,2000,2200,2500";
   }
 
+  const res = await fetch(
+    `https://explorer.lichess.ovh/lichess?variant=standard&speeds=${speeds}&ratings=${ratings}&fen=${encodeURIComponent(
+      fen
+    )}`
+  );
+  return await res.json();
+}
+
+export function useLichessOpeningPosition(
+  fen: string,
+  speeds: string | undefined,
+  ratings: string | undefined
+) {
   return useQuery<LichessOpeningPosition>(
     ["lichess-opening-position", speeds, ratings, fen],
-    async () => {
-      const res = await fetch(
-        `https://explorer.lichess.ovh/lichess?variant=standard&speeds=${speeds}&ratings=${ratings}&fen=${encodeURIComponent(
-          fen
-        )}`
-      );
-      return await res.json();
-    }
+    () => fetchLichessOpeningPosition(fen, speeds, ratings)
   );
 }
 

@@ -2,6 +2,26 @@ import { Position, Repertoire } from "@chess-buddy/database";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useSupabase } from ".";
 
+export const REPERTOIRE_QUERY = "REPERTOIRE_QUERY";
+export function useRepertoireQuery(repertoireId: string | undefined) {
+  const supabase = useSupabase();
+
+  return useQuery(
+    [REPERTOIRE_QUERY, repertoireId],
+    async () => {
+      const { data } = await supabase
+        .from<Repertoire>("repertoires")
+        .select()
+        .eq("id", repertoireId!)
+        .single();
+      return data!;
+    },
+    {
+      enabled: !!repertoireId,
+    }
+  );
+}
+
 export const REPERTOIRES_QUERY = "REPERTOIRES_QUERY";
 export function useRepertoiresQuery() {
   const supabase = useSupabase();

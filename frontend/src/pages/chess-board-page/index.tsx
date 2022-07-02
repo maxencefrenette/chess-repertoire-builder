@@ -1,9 +1,7 @@
-import { Repertoire } from "@chess-buddy/database";
 import { Stack, Box } from "@mui/material";
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
-import { useQuery } from "react-query";
-import { useSupabase } from "api/supabase";
+import { useRepertoireQuery } from "api/supabase";
 import { ChessBoard } from "./ChessBoard";
 import { HolesInRepertoire } from "./HolesInRepertoire";
 import { Sidebar } from "./Sidebar";
@@ -15,21 +13,7 @@ interface ChessBoardPageProps extends RouteComponentProps {
 export const ChessBoardPage: React.FC<ChessBoardPageProps> = ({
   repertoireId,
 }) => {
-  const supabase = useSupabase();
-
-  const { data: repertoire } = useQuery("repertoire", async () => {
-    const { data, error } = await supabase
-      .from<Repertoire>("repertoires")
-      .select()
-      .eq("id", repertoireId || "")
-      .single();
-
-    if (error !== null) {
-      throw error;
-    }
-
-    return data!;
-  });
+  const { data: repertoire } = useRepertoireQuery(repertoireId);
 
   // Display nothing while loading
   if (repertoireId && !repertoire) return null;

@@ -53,6 +53,7 @@ async function downloadPgn(supabase: SupabaseClient, repertoireId: string) {
   pgnFileContents += `[Variant "Standard"]\n`;
   pgnFileContents += `\n`;
   pgnFileContents += pgnMoves(moves, startingPosition, 0);
+  pgnFileContents += ` *\n`;
 
   downloadFile(pgnFileName, pgnFileContents);
 }
