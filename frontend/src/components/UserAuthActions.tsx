@@ -36,6 +36,7 @@ export const UserAuthActions = observer(() => {
     const handleLogout = () => {
       supabase.auth.signOut();
       handleClose();
+      window.location.href = "/";
     };
 
     return (
