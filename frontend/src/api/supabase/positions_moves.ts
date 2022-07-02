@@ -145,6 +145,7 @@ export function useAddMoveToRepertoire() {
         move_frequency: moveFrequency,
         position_turn: newPosition.turn(),
         position_frequency: childFrequency,
+        position_transpositions: repertoirePosition.transpositions,
       });
     },
     {

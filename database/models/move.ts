@@ -1,7 +1,7 @@
 export interface Move {
-  repertoire_id: string;
-  parent_fen: string;
-  child_fen: string;
-  san: string;
-  move_frequency: number;
+  readonly repertoire_id: string;
+  readonly parent_fen: string;
+  readonly child_fen: string;
+  readonly san: string;
+  readonly move_frequency: number;
 }

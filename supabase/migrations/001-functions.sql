@@ -64,6 +64,7 @@ create function
     positions.repertoire_id,
     positions.turn,
     positions.frequency * (1 - coalesce(sum(moves.move_frequency), 0)) as frequency, -- Hack here, this is not the position's frequency, but it works
+    positions.transpositions,
     positions.created_at
   from positions
   left join moves on
@@ -89,11 +90,12 @@ create function
     move_san character varying,
     move_frequency double precision,
     position_turn color,
-    position_frequency double precision
+    position_frequency double precision,
+    position_transpositions smallint
   ) returns void as $$ begin
 
-  insert into positions values (child_fen, add_move_to_repertoire.repertoire_id, position_turn, position_frequency)
-  on conflict on constraint positions_pkey do update set frequency = positions.frequency + excluded.frequency;
+  insert into positions values (child_fen, add_move_to_repertoire.repertoire_id, position_turn, position_frequency, position_transpositions)
+  on conflict on constraint positions_pkey do update set frequency = positions.frequency + excluded.frequency, transpositions = positions.transpositions + excluded.transpositions;
 
   insert into moves values (add_move_to_repertoire.repertoire_id, parent_fen, child_fen, move_san, move_frequency);
 

@@ -3,4 +3,5 @@ export interface Position {
   readonly repertoire_id: string;
   readonly turn: "w" | "b";
   readonly frequency: number;
+  readonly transpositions: number;
 }

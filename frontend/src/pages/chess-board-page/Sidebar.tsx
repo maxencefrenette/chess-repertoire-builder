@@ -2,13 +2,13 @@ import { Box, Paper, styled } from "@mui/material";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { useLichessOpeningPosition, score, games } from "../../api/lichess";
-import { useStore } from "../../store";
+import { useLichessOpeningPosition, score, games } from "api/lichess";
+import { useStore } from "store";
 import { MovesBreadcrumbs } from "./MovesBreadcrumbs";
 import {
   useRepertoirePosition,
   useRepertoirePositionMoves,
-} from "../../api/supabase";
+} from "api/supabase";
 import {
   DataGrid,
   GridColDef,
@@ -113,6 +113,14 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
       valueFormatter: formatFrequencyColumn,
       hide: !repertoireSelected,
     },
+    {
+      field: "position_transpositions",
+      headerName: "Transpositions",
+      description:
+        "The number of lines that lead to the resulting position in this repertoire",
+      width: 120,
+      hide: !repertoireSelected,
+    },
   ];
 
   // Zip repertoire moves with lichess moves data
@@ -135,6 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
           ? games(lichessMove) / games(lichessOpeningStats)
           : 0,
         position_frequency: repertoireMove?.child_position.frequency,
+        position_transpositions: repertoireMove?.child_position.transpositions,
         isInRepertoire: !!repertoireMove,
       };
     })
@@ -189,6 +198,8 @@ export const Sidebar: React.FC<SidebarProps> = observer(({ repertoire }) => {
           <>
             <Box sx={{ display: "inline-block", width: "30px" }} />
             Frequency: {formatFrequency(repertoirePosition.frequency)}
+            <Box sx={{ display: "inline-block", width: "30px" }} />
+            Transpositions: {repertoirePosition.transpositions}
           </>
         )}
       </Box>

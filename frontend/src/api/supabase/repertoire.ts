@@ -52,6 +52,7 @@ export function useCreateRepertoire() {
         fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
         turn: "w",
         frequency: 1,
+        transpositions: 1,
       });
     },
     {

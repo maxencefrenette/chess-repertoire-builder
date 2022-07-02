@@ -58,6 +58,7 @@ create table
     repertoire_id uuid not null,
     turn color not null,
     frequency double precision not null,
+    transpositions smallint not null,
     created_at timestamp
     with
       time zone default now()
