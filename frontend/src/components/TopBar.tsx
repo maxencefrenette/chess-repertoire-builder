@@ -2,11 +2,11 @@ import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Link as RouterLink } from "@reach/router";
 import { UserAuthActions } from "./UserAuthActions";
-import { useStore } from "store";
 import { observer } from "mobx-react-lite";
+import { useIsLoggedIn } from "api/supabase/auth";
 
 export const TopBar = observer(() => {
-  const store = useStore();
+  const isLoggedIn = useIsLoggedIn();
 
   return (
     <div>
@@ -22,7 +22,7 @@ export const TopBar = observer(() => {
           <Button component={RouterLink} to="/" color="inherit">
             Board
           </Button>
-          {store.ui.isLoggedIn && (
+          {isLoggedIn && (
             <>
               <Button component={RouterLink} to="/repertoires" color="inherit">
                 Repertoires

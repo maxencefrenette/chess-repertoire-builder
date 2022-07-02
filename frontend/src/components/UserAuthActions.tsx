@@ -1,30 +1,30 @@
 import { Button, IconButton, Menu, MenuItem, Tooltip } from "@mui/material";
 import React from "react";
 import { useSupabase } from "../api/supabase";
-import { Link as RouterLink } from "@reach/router";
+import { Link } from "@reach/router";
 import { AccountCircle } from "@mui/icons-material";
-import { useStore } from "../store";
 import { observer } from "mobx-react-lite";
+import { useIsLoggedIn } from "api/supabase/auth";
 
 export const UserAuthActions = observer(() => {
-  const store = useStore();
   const supabase = useSupabase();
+  const isLoggedIn = useIsLoggedIn();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   // Use the store instead of supabase to check if the user is logged in in order to trigger appropriate rerenders through mobx
-  if (store.ui.isLoggedIn === false) {
+  if (isLoggedIn === false) {
     return (
       <>
-        <Button component={RouterLink} to="/login" color="inherit">
+        <Button component={Link} to="/login" color="inherit">
           Login
         </Button>
-        <Button component={RouterLink} to="/register" color="inherit">
+        <Button component={Link} to="/register" color="inherit">
           Register
         </Button>
       </>
     );
-  } else if (store.ui.isLoggedIn === true) {
+  } else if (isLoggedIn === true) {
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
       setAnchorEl(event.currentTarget);
     };
