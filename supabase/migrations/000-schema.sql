@@ -1,9 +1,13 @@
+create type
+  color as enum ('w', 'b');
+
 -- #region Repertoires table
 create table
   public.repertoires (
     id uuid not null default uuid_generate_v4() primary key,
     user_id uuid not null,
     name character varying not null,
+    color color not null,
     lichess_speeds character varying not null,
     lichess_ratings character varying not null,
     created_at timestamp
@@ -47,9 +51,6 @@ create table
 
 alter table
   public.moves enable row level security;
-
-create type
-  color as enum ('w', 'b');
 
 create table
   public.positions (

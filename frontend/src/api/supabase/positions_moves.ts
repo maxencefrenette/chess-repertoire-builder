@@ -57,7 +57,7 @@ export function useRepertoirePositionMoves(
   return useQuery(
     [POSITION_MOVES_QUERY, repertoire_id, fen],
     async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from<MoveWithChildPosition>("moves")
         .select(
           `
@@ -67,10 +67,6 @@ export function useRepertoirePositionMoves(
         )
         .eq("repertoire_id", repertoire_id!)
         .eq("parent_fen", fen);
-
-      if (error !== null) {
-        throw error;
-      }
 
       return data!;
     },
@@ -90,14 +86,10 @@ export function useRepertoireHoles(repertoire_id: string, type: 1 | 2) {
   const supabase = useSupabase();
 
   return useQuery([REPERTOIRE_HOLES_QUERY, repertoire_id, type], async () => {
-    const { data, error } = await supabase.rpc<Position>(
+    const { data } = await supabase.rpc<Position>(
       `find_repertoire_holes_type_${type}`,
       { repertoire_id }
     );
-
-    if (error !== null) {
-      throw error;
-    }
 
     return data!;
   });

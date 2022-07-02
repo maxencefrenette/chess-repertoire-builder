@@ -24,6 +24,7 @@ const repertoire = await supabase
   .from<Repertoire>("repertoires")
   .insert({
     name: "London System",
+    color: "w",
     lichess_ratings: "1600,1800",
     lichess_speeds: "blitz,rapid,classical,correspondence",
     user_id: user.id,

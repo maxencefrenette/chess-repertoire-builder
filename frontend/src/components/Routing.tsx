@@ -1,4 +1,5 @@
 import { Router } from "@reach/router";
+import { RepertoireCreatePage } from "pages/repertoire-create-page";
 import React from "react";
 import { ChessBoardPage } from "../pages/chess-board-page";
 import { LoginPage } from "../pages/login-page";
@@ -10,6 +11,7 @@ export const Routing = () => {
     <Router>
       <ChessBoardPage path="/" default />
       <RepertoireListPage path="/repertoires" />
+      <RepertoireCreatePage path="/repertoires/create" />
       <ChessBoardPage path="/repertoires/:repertoireId" />
       <RegisterPage path="/register" />
       <LoginPage path="/login" />

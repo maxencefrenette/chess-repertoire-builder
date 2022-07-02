@@ -1,31 +1,19 @@
-import { Repertoire } from "@chess-buddy/database";
-import { Button, Paper, Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
-import { useQuery } from "react-query";
-import { useSupabase } from "api/supabase";
 import { Link } from "@reach/router";
+import { useRepertoiresQuery } from "api/supabase";
+import { PageContainer } from "shared/PageContainer";
 
 export const RepertoireListPage: React.FC<RouteComponentProps> = () => {
-  const supabase = useSupabase();
-  const { data: repertoires } = useQuery("repertoires", async () => {
-    const { data, error } = await supabase
-      .from<Repertoire>("repertoires")
-      .select();
-
-    if (error !== null) {
-      throw error;
-    }
-
-    return data!;
-  });
+  const { data: repertoires } = useRepertoiresQuery();
 
   if (!repertoires) {
     return null;
   }
 
   return (
-    <Paper sx={{ width: 1000, margin: "16px auto", padding: "16px" }}>
+    <PageContainer>
       <Stack sx={{ marginBottom: "16px" }}>
         {repertoires.map((repertoire) => (
           <Button
@@ -38,9 +26,9 @@ export const RepertoireListPage: React.FC<RouteComponentProps> = () => {
           </Button>
         ))}
       </Stack>
-      <Button variant="contained" disabled={true}>
+      <Button component={Link} to="/repertoires/create" variant="contained">
         Create Repertoire
       </Button>
-    </Paper>
+    </PageContainer>
   );
 };
