@@ -52,29 +52,44 @@ async function downloadPgn(supabase: SupabaseClient, repertoireId: string) {
   pgnFileContents += `[Result "*"]\n`;
   pgnFileContents += `[Variant "Standard"]\n`;
   pgnFileContents += `\n`;
-  pgnFileContents += pgnMoves(moves, startingPosition, 0);
+  pgnFileContents += pgnMoves(moves, startingPosition, 0, new Set());
   pgnFileContents += ` *\n`;
 
   downloadFile(pgnFileName, pgnFileContents);
 }
 
-function pgnMoves(repertoireMoves: Move[], startFen: string, halfMove: number) {
-  const moves = repertoireMoves.filter((m) => m.parent_fen === startFen);
-  // TODO: eleminate transpositions
-  // TODO: sort by frequency
+function pgnMoves(
+  repertoireMoves: Move[],
+  fen: string,
+  halfMove: number,
+  visitedFens: Set<string>
+) {
+  if (visitedFens.has(fen)) return " {Transposes}";
+  visitedFens.add(fen);
+
+  const moves = repertoireMoves.filter((m) => m.parent_fen === fen);
 
   if (moves.length === 0) {
     return "";
   }
 
+  // Sort moves by frequency to put the main line first
+  moves.sort((m) => -m.move_frequency);
+
   const isWhiteTurn = halfMove % 2 === 0;
-  const firstMove = moves[0];
-  const subvariations = moves.slice(1);
+  const [firstMove, ...subvariations] = moves;
 
   let output = "";
   if (halfMove !== 0) output += " ";
   if (isWhiteTurn) output += `${Math.floor(halfMove / 2) + 1}. `;
   output += firstMove.san;
+
+  const mainLine = pgnMoves(
+    repertoireMoves,
+    firstMove.child_fen,
+    halfMove + 1,
+    visitedFens
+  );
 
   for (const move of subvariations) {
     output += " (";
@@ -83,12 +98,17 @@ function pgnMoves(repertoireMoves: Move[], startFen: string, halfMove: number) {
     output += " ";
 
     output += move.san;
-    output += pgnMoves(repertoireMoves, move.child_fen, halfMove + 1);
+    output += pgnMoves(
+      repertoireMoves,
+      move.child_fen,
+      halfMove + 1,
+      visitedFens
+    );
 
     output += ")";
   }
 
-  output += pgnMoves(repertoireMoves, firstMove.child_fen, halfMove + 1);
+  output += mainLine;
 
   return output;
 }
