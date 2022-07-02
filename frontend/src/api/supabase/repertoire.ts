@@ -6,9 +6,8 @@ export const REPERTOIRES_QUERY = "REPERTOIRES_QUERY";
 export function useRepertoiresQuery() {
   const supabase = useSupabase();
 
-  return useQuery("repertoires", async () => {
+  return useQuery(REPERTOIRES_QUERY, async () => {
     const { data } = await supabase.from<Repertoire>("repertoires").select();
-
     return data!;
   });
 }
@@ -22,7 +21,7 @@ export interface CreateRepertoireArguments {
 }
 
 /**
- * Returns a mutation that adds a move to a repertoire
+ * Returns a mutation that creates a repertoire
  * @returns
  */
 export function useCreateRepertoire() {
@@ -54,6 +53,32 @@ export function useCreateRepertoire() {
         turn: "w",
         frequency: 1,
       });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(REPERTOIRES_QUERY);
+      },
+    }
+  );
+}
+
+export const DELETE_REPERTOIRE_MUTATION = "DELETE_REPERTOIRE_MUTATION";
+
+/**
+ * Returns a mutation that deletes a repertoire
+ * @returns
+ */
+export function useDeleteRepertoire() {
+  const supabase = useSupabase();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    DELETE_REPERTOIRE_MUTATION,
+    async (repertoireId: string) => {
+      await supabase
+        .from<Repertoire>("repertoires")
+        .delete()
+        .eq("id", repertoireId);
     },
     {
       onSuccess: () => {

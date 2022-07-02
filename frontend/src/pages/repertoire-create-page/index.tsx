@@ -24,7 +24,6 @@ export const RepertoireCreatePage: React.FC<RouteComponentProps> = () => {
   const createRepertoireMutation = useCreateRepertoire();
 
   async function onSubmit(values: FormValues) {
-    console.log(values);
     createRepertoireMutation.mutateAsync({
       name: values.name,
       color: values.color,
